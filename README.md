@@ -1,2 +1,2 @@
 # Online-Voting-System-by-StrawHat
-This is a collaborative project for developing an online voting system.
+Collaborative project to build online voting system.
