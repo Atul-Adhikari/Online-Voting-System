@@ -1,0 +1,64 @@
+.firstContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10%;
+  background-image: url("A_digital_ballot_box.png");
+  background-size: cover;
+  color: #f1f1f1;
+}
+
+/* Left Content - Title & Button */
+.leftContent {
+  flex: 1;
+}
+
+.leftContent h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.leftContent p {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.getStarted {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  margin-top: 10px;
+  background-color: #ffffff;
+  color: #3e8ca9;
+  font-size: 20px;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.getStarted:hover {
+  background-color: #257f2f;
+  color: white;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Right Content - Logo */
+.rightContent {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  max-width: 300px;
+  height: auto;
+  border-radius: 50%;
+}

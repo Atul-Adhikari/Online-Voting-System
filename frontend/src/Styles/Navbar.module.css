@@ -1,6 +1,7 @@
 /* Navbar */
 .navbar {
-  background-color: #1f5156;
+  /* background-color: #1f5156; */
+  background-color: #59A5D2;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -38,6 +39,10 @@
   padding: 0.5rem 1rem;
 }
 
+.navLinks:hover {
+  color: #ffdd40;
+}
+
 .navItem .active {
   color: #ffdd40;
 }
@@ -68,7 +73,7 @@
   cursor: pointer;
 }
 
-.webName{
+.webName {
   font-weight: bold;
   font-size: 30px;
   color: white;

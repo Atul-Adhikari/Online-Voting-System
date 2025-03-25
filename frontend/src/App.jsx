@@ -7,10 +7,8 @@ function App() {
   return (
     <BrowserRouter>
       {" "}
-      {/* Wrap your components inside BrowserRouter */}
+      <Navbar />
       <FirstPage />
-      {/* <Navbar/> */}
-      {/* other components */}
     </BrowserRouter>
   );
 }
