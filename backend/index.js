@@ -7,8 +7,10 @@ const PORT = 3333;
 app.use(express.json());
 
 const usersRoute = require("./routes/users");
+const pollsRoute = require("./routes/polls");
 
 app.use("/users", usersRoute);
+app.use("/polls", pollsRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello world.");
