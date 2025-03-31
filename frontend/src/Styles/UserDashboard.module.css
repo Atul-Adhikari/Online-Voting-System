@@ -1,0 +1,274 @@
+.candidateList {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.candidateOption {
+  display: block;
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.candidateOption input {
+  margin-right: 10px;
+}
+
+/* Dashboard container */
+.dashboardContainer {
+  display: flex;
+  height: 100vh;
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #f0f4f8, #d6e4f0);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease;
+}
+
+.profileSection {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profilePic {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 2px solid #ecf0f1;
+}
+
+.username {
+  color: #ecf0f1;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.navLinks {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.navLinks li {
+  margin-bottom: 20px;
+}
+
+.navLinks a {
+  color: #ecf0f1;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease, padding-left 0.3s ease;
+}
+
+.navLinks a:hover {
+  color: #3498db;
+  padding-left: 10px;
+}
+
+/* Main content area */
+.mainContent {
+  flex-grow: 1;
+  padding: 40px;
+  background-color: #ecf0f1;
+  color: #34495e;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: padding 0.3s ease;
+}
+
+.header {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  font-size: 2.8rem;
+  color: #2c3e50;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.header p {
+  color: #7f8c8d;
+  font-size: 1.3rem;
+}
+
+.imagePart img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-left: 30px;
+}
+.votingStatus,
+.upcomingElection {
+  margin-bottom: 30px;
+}
+
+.statusCard,
+.electionCard {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  padding: 25px;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 20px;
+}
+
+.voteButton {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 18px 35px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.voteButton:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.votedMessage {
+  font-size: 1.2rem;
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.detailsButton {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 18px 35px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.detailsButton:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+.upcomingElection h3 {
+  font-size: 2rem;
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.upcomingElection p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 20px;
+    box-shadow: none;
+    position: relative;
+  }
+
+  .mainContent {
+    padding: 20px;
+  }
+
+  .profilePic {
+    width: 70px;
+    height: 70px;
+  }
+
+  .username {
+    font-size: 1.3rem;
+  }
+
+  .navLinks a {
+    font-size: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .voteButton,
+  .detailsButton {
+    padding: 15px 25px;
+    font-size: 1rem;
+  }
+}
+/* Previous Elections Sliding Carousel */
+.previousElections {
+  margin-bottom: 30px;
+}
+
+.previousElections h2{
+  margin-bottom: 20px;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: 300px; /* Adjust as per the image height */
+}
+
+.carouselInner {
+  display: flex;
+  animation: slide 3s linear infinite;
+}
+
+.carouselImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the entire area */
+}
+
+/* Keyframe animation for continuous sliding */
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(-200%);
+  }
+  75% {
+    transform: translateX(-300%);
+  }
+  100% {
+    transform: translateX(-400%);
+  }
+}
