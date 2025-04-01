@@ -313,7 +313,7 @@ const VoteList = () => {
                           </button>
                         </>
                       )}
-                      <button onClick={() => handleDelete(poll.id)} className="action-btn delete-btn">
+                      <button id="delete-btn" onClick={() => handleDelete(poll.id)} className="action-btn delete-btn">
                         <i className="fa fa-trash"></i> Delete
                       </button>
                     </div>

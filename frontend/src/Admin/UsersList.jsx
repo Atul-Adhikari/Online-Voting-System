@@ -112,59 +112,60 @@ const UsersList = () => {
       </div>
 
       <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Photo</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Phone</th>
-              <th>Email</th>
-              <th>DOB</th>
-              <th>Gender</th>
-              <th>Role</th>
-              <th>Province</th> {/* New City Column */}
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user, index) => (
-              <tr key={user.id}>
-                <td>{index + 1}</td>
-                <td>
-                  <img
-                    src={user.profileImage || defaultUserImage}
-                    alt="user"
-                    className="user-photo"
-                  />
-                </td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.phone}</td>
-                <td className="email">{user.email}</td>
-                <td>{user.dob}</td>
-                <td>{user.gender}</td>
-                <td>
-                  <span className={`role ${user.role.toLowerCase()}`}>
-                    {user.role}
-                  </span>
-                </td>
-                <td>{user.city}</td> {/* Display the city here */}
-                <td>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    className="delete-btn"
-                    title="Delete User"
-                  >
-                    <i className="fas fa-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Photo</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>DOB</th>
+        <th>Gender</th>
+        <th>Role</th>
+        <th>Province</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredUsers.map((user, index) => (
+        <tr key={user.id}>
+          <td>{index + 1}</td>
+          <td>
+            <img
+              src={user.profileImage || defaultUserImage}
+              alt="User"
+              className="user-photo"
+            />
+          </td>
+          <td>{user.firstName}</td>
+          <td>{user.lastName}</td>
+          <td>{user.phone}</td>
+          <td className="email">{user.email}</td>
+          <td>{user.dob}</td>
+          <td>{user.gender}</td>
+          <td>
+            <span className={`role ${user.role.toLowerCase()}`}>
+              {user.role}
+            </span>
+          </td>
+          <td>{user.city}</td>
+          <td>
+            <button
+              onClick={() => handleDelete(user.id)}
+              className="delete-btn"
+              title="Delete User"
+            >
+              <i className="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
     </div>
   );
 };

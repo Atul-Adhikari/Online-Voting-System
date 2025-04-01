@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';  
 import axios from 'axios';
 import './Auth.css';
-import logoImage from '../../assets/Logo2.png'; 
+import logoImage from '../../assets/Logo2.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -32,16 +32,16 @@ const Login = () => {
 
   return (
     <div className="auth-container">
-    <div className="left-side">
-    <div className="left-top-title">
-    <h1 className="emat-title">E-मत</h1>
-    </div>
-      <img src={logoImage} alt="Voting Logo" className="auth-logo" />
-    <div div className="left-message">
-        <h1>Welcome Back</h1>
-        <p>Make your voice count. Choose a wise leader.</p>
+      <div className="left-side">
+        <div className="left-top-title">
+          <h1 className="emat-title">E-मत</h1>
+        </div>
+        <img src={logoImage} alt="Voting Logo" className="auth-logo" />
+        <div className="left-message">
+          <h1>Welcome Back</h1>
+          <p>Make your voice count. Choose a wise leader.</p>
+        </div>
       </div>
-    </div>
 
       <div className="right-side">
         <div className="login-card">
