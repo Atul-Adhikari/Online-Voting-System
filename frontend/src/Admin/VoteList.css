@@ -192,11 +192,12 @@ html, body {
 .edit-btn { background-color: #3b82f6; }
 .edit-btn:hover { background-color: #2563eb; }
 
-.delete-btn {
+#delete-btn {
   padding: 10px 45px;
+  border-radius: 10px;
   background-color: #ef4444;
 }
-.delete-btn:hover { background-color: #dc2626; }
+#delete-btn:hover { background-color: #dc2626; }
 
 .close-btn { background-color: #f59e0b; }
 .close-btn:hover { background-color: #d97706; }
