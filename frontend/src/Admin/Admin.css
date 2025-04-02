@@ -1,0 +1,148 @@
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background-color: #0a0a23;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Admin Dashboard Container */
+.admin-dashboard {
+    width: 100vw;
+    height: 100vh;
+    padding: 4rem 2rem;
+    background: linear-gradient(130deg, #4a90e2, #377daf 45%, #3b3a67);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+}
+
+/* E-मत Main Logo/Title */
+.admin-logo {
+    font-size: 8rem;
+    font-weight: 1000;
+    margin-bottom: 0.5rem;
+    text-align:center;
+    color: #ffffff;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Admin Panel Subtitle */
+.admin-title {
+    font-size: 2rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #f1f1f1;
+   
+    animation: fadeIn 1s ease-in-out;
+    z-index: 2;
+}
+
+/* Cards Grid */
+.admin-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1300px;
+    width: 100%;
+    z-index: 2;
+}
+
+/* Card Base Style */
+.admin-card {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideFadeIn 0.8s ease forwards;
+    text-align: center;
+}
+
+.admin-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
+}
+
+/* Card Title */
+.admin-card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #000000;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Card Text */
+.admin-card-text {
+    font-size: 1rem;
+    color: #000000;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* Buttons */
+.admin-button {
+    padding: 0.8rem 1.5rem;
+    border-radius: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background-color: #ff6b81;
+    border: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.admin-button:hover {
+    background-color: #ff4757;
+    box-shadow: 0 0 15px #ff6b81;
+    transform: translateY(-3px);
+}
+
+/* Icons */
+.admin-card-title i,
+.admin-button i {
+    font-size: 1.3rem;
+    margin-right: 8px;
+}
+
+/* Animations */
+@keyframes slideFadeIn {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .admin-logo {
+        font-size: 3rem;
+    }
+
+    .admin-title {
+        font-size: 1.5rem;
+    }
+
+    .admin-dashboard {
+        padding: 2rem 1rem;
+    }
+}
