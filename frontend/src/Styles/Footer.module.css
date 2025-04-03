@@ -1,0 +1,83 @@
+.footer {
+  padding: 50px 20px;
+  font-size: 1em;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #f8f8f8;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+.footerContent div {
+  width: 30%;
+  flex: 1;
+  min-width: 200px;
+}
+
+h4 {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+p {
+  margin: 5px 0;
+  font-size: 0.95em;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+  font-size: 0.9em;
+}
+
+a:hover {
+  color: rgba(0, 0, 255, 0.555);
+  transition: color 0.3s ease-in-out;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  margin-bottom: 12px;
+}
+
+.socialSection {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.socialIcons a {
+  font-size: 1.5em;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.socialIcons a:hover {
+  transform: scale(1.2);
+  color: #ffc107; /* Gold color on hover */
+}
+
+.footerBottom {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.85em;
+  padding-top: 10px;
+  border-top: 1px solid black;
+}
