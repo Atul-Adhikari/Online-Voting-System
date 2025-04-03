@@ -28,6 +28,7 @@ const ElectionInfo = () => {
         "Small Business Support",
         "Tax Reduction",
         "Infrastructure Development",
+        
       ],
     },
     {

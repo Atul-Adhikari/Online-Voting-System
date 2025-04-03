@@ -39,8 +39,9 @@
   align-items: center;
   text-align: center;
   justify-content: center;
-  gap: 30px;
+  gap:30px;
   margin-bottom: 20px;
+  
 }
 
 .heading img {
