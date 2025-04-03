@@ -7,10 +7,11 @@
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: auto;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   /* background-color: #0a0a23; */
   color: #000000;
   overflow-x: hidden;
@@ -37,7 +38,7 @@ html, body {
   font-weight: 800;
   margin-bottom: 2.5rem;
   background: linear-gradient(to right, #ffffff, #bcdfff);
-  -webkit-background-clip: text;
+  /* -webkit-background-clip: text; */
   -webkit-text-fill-color: transparent;
   text-align: center;
   animation: fadeIn 1s ease-in-out;
@@ -190,8 +191,12 @@ html, body {
   margin-right: 6px;
 }
 
-.edit-btn { background-color: #3b82f6; }
-.edit-btn:hover { background-color: #2563eb; }
+.edit-btn {
+  background-color: #3b82f6;
+}
+.edit-btn:hover {
+  background-color: #2563eb;
+}
 
 #delete-btn {
   padding: 10px 45px;
@@ -199,10 +204,16 @@ html, body {
   background-color: #ef4444;
   font-size: 0.9rem;
 }
-#delete-btn:hover { background-color: #dc2626; }
+#delete-btn:hover {
+  background-color: #dc2626;
+}
 
-.close-btn { background-color: #f59e0b; }
-.close-btn:hover { background-color: #d97706; }
+.close-btn {
+  background-color: #f59e0b;
+}
+.close-btn:hover {
+  background-color: #d97706;
+}
 
 .save-btn {
   background-color: #000000;
@@ -326,8 +337,14 @@ html, body {
   Animations
 ------------------------------------ */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ------------------------------------
