@@ -32,7 +32,7 @@ html, body {
   font-weight: 800;
   margin-bottom: 2.5rem;
   background: linear-gradient(to right, #ffffff, #bcdfff);
-  /* -webkit-background-clip: text; */
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
   animation: fadeIn 1s ease-in-out;
