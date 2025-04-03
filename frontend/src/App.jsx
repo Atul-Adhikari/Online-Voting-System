@@ -1,8 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// General Components
-import SplashPage from "./Components/SplashPage";
+
 
 // Auth Components
 import Login from "./Components/Authentication/Login";
@@ -14,20 +13,18 @@ import CreateVote from "./Admin/CreateVote";
 import VoteList from "./Admin/VoteList";
 import UsersList from "./Admin/UsersList";
 
-// (Optional) A placeholder dashboard component for users
-import UserDashboard from "./Components/UserDashboard";
+
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<SplashPage />} />
+       
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* User Dashboard */}
-        <Route path="/userDashboard" element={<UserDashboard />} />
+      
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />
