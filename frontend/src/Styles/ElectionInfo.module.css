@@ -1,0 +1,74 @@
+/* ElectionInfo.module.css */
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #34495e;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.section {
+  background: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.section h2 {
+  margin-bottom: 15px;
+}
+
+.section li {
+  margin-bottom: 10px;
+}
+
+.section p {
+  margin-bottom: 10px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  gap:30px;
+  margin-bottom: 20px;
+  
+}
+
+.heading img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.candidateList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.candidateCard {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 250px;
+}
+
+.candidateImg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
