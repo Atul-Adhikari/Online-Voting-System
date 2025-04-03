@@ -16,6 +16,7 @@ import UsersList from "./Admin/UsersList";
 
 // (Optional) A placeholder dashboard component for users
 import UserDashboard from "./Components/UserDashboard";
+import LogoutMessage from "./Components/LogoutMesssage";
 
 function App() {
   return (
@@ -24,10 +25,11 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<SplashPage />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={<Signup />} /> 
+        <Route path="/logout" element={<LogoutMessage/>} /> 
 
         {/* User Dashboard */}
-        <Route path="/userDashboard" element={<UserDashboard />} />
+        <Route path="/userDashboard*" element={<UserDashboard />} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />

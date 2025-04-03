@@ -1,5 +1,5 @@
-import React from 'react'
-import styles from "../Styles/LogoutMessage.module.css"
+import React from "react";
+import styles from "../Styles/LogoutMessage.module.css";
 
 const LogoutMessage = () => {
   return (
@@ -7,7 +7,7 @@ const LogoutMessage = () => {
       <img src="/Loading_icon.gif" alt="" srcset="" />
       <p>Please wait while logging out.....</p>
     </div>
-  )
-}
+  );
+};
 
-export default LogoutMessage
+export default LogoutMessage;
