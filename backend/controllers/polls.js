@@ -4,13 +4,13 @@ const mongoose = require('mongoose');
 
 const createPoll = async (req, res) => {
   try {
-    const { title, description, address, options } = req.body;
+    const { title, description, address, duration, options } = req.body;
 
     if (!title || !description || !options || options.length < 2) {
       return res.status(400).json({ message: "Poll must have a title, description, and at least 2 options." });
     }
 
-    const poll = new Poll({ title, description, address, options });
+    const poll = new Poll({ title, description, address, duration, options });
     await poll.save();
 
     res.status(201).json({ message: "Poll created successfully!", poll });
@@ -19,10 +19,42 @@ const createPoll = async (req, res) => {
   }
 };
 
+const updatePoll = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const poll = await Poll.findByIdAndUpdate(
+      req.params.id,
+      { $set: { status } },
+      { new: true, runValidators: true }
+    );
+
+    res.json({ message: "Poll updated successfully", poll });
+  } catch (err) {
+    console.error("Update poll error:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 const getAllPolls = async (req, res) => {
   try {
     const polls = await Poll.find();
-    res.json(polls);
+    const now = Date.now();
+    const updates = [];
+
+    polls.forEach((poll) => {
+      if (poll.status === "Active") {
+        const expirationTime = new Date(poll.createdAt).getTime() + poll.duration * 60 * 60 * 1000;
+        if (now > expirationTime) {
+          poll.status = "Ended";
+          updates.push(poll.save());
+        }
+      }
+    });
+
+    if (updates.length > 0) await Promise.all(updates);
+    const refreshedPolls = await Poll.find();
+    res.json(refreshedPolls);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -45,13 +77,6 @@ const votePoll = async (req, res) => {
     pollAddress = poll.address
     if (userAddress.toLowerCase() !== pollAddress.toLowerCase()) {
       return res.status(403).json({ message: "You are not allowed to vote on the election of this address." });
-    }
-
-    const timeElapsed = Date.now() - poll.createdAt;
-    const twentyFourHours = 24 * 60 * 60 * 1000;
-
-    if (timeElapsed > twentyFourHours) {
-      return res.status(400).json({ message: "Voting period has ended!" });
     }
 
     const selectedOption = poll.options.id(optionId);
@@ -90,6 +115,7 @@ const getPollID = async (req, res) => {
 
 module.exports = {
   createPoll,
+  updatePoll,
   getAllPolls,
   getPollID,
   votePoll

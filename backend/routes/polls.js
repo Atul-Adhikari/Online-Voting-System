@@ -5,6 +5,7 @@ const authMiddleware = require("../middleware/auth");
 const {
   getAllPolls,
   createPoll,
+  updatePoll,
   getPollID,
   votePoll
 } = require("../controllers/polls");
@@ -17,5 +18,6 @@ router.post("/vote", authMiddleware, votePoll);
 
 router.post("/", authMiddleware, createPoll);
 
+router.put("/:id", authMiddleware, updatePoll);
 
 module.exports = router;
