@@ -7,10 +7,13 @@ const {
   createPoll,
   updatePoll,
   getPollID,
+  getPastPolls,
   votePoll
 } = require("../controllers/polls");
 
 router.get("/", authMiddleware, getAllPolls);
+
+router.get("/past", authMiddleware, getPastPolls);
 
 router.get("/:id", authMiddleware, getPollID);
 

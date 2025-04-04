@@ -43,10 +43,10 @@ const getAllPolls = async (req, res) => {
     const updates = [];
 
     polls.forEach((poll) => {
-      if (poll.status === "Active") {
+      if (poll.status === "active") {
         const expirationTime = new Date(poll.createdAt).getTime() + poll.duration * 60 * 60 * 1000;
         if (now > expirationTime) {
-          poll.status = "Ended";
+          poll.status = "inactive";
           updates.push(poll.save());
         }
       }
@@ -111,6 +111,28 @@ const getPollID = async (req, res) => {
   }
 };
 
+const getPastPolls = async (req, res) => {
+  try {
+    const polls = await Poll.find({ status: "inactive" });
+
+    const formattedPolls = polls.map(poll => {
+
+      const maxVotes = Math.max(...poll.options.map(option => option.votes));
+      const winner = poll.options.find(option => option.votes === maxVotes);
+
+      return {
+        title: poll.title,
+        winner: winner ? winner.name : null,
+        votes: winner ? winner.votes : 0,
+        year: new Date(poll.createdAt).getFullYear()
+      };
+    }).filter(Boolean);
+
+    res.json(formattedPolls);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 
 module.exports = {
@@ -118,5 +140,6 @@ module.exports = {
   updatePoll,
   getAllPolls,
   getPollID,
+  getPastPolls,
   votePoll
 };
