@@ -9,7 +9,8 @@ const {
   updatePoll,
   getPollID,
   getPastPolls,
-  votePoll
+  votePoll,
+  deletePoll
 } = require("../controllers/polls");
 
 router.get("/", authMiddleware, getAllPolls);
@@ -23,5 +24,7 @@ router.post("/vote", authMiddleware, votePoll);
 router.post("/", authMiddleware, adminMiddleware, createPoll);
 
 router.put("/:id", authMiddleware, adminMiddleware, updatePoll);
+
+router.delete("/:id", authMiddleware, adminMiddleware, deletePoll);
 
 module.exports = router;
