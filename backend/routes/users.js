@@ -4,6 +4,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/auth");
+const adminMiddleware = require("../middleware/isAdmin");
 const emailRegex =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
@@ -11,10 +12,10 @@ const dateOfBirthRegex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
 
 //Register user
 router.post("/register", async (req, res) => {
-  const { fullName, email, password, address, phone, gender, dateOfBirth } = req.body;
+  const { fullName, email, password, address, phone, gender, dateOfBirth, nationalID } = req.body;
 
-  if (!(fullName && email && password && address && phone && gender && dateOfBirth)) {
-    return res.json("All fields required: fullName, email, password, address, phone, gender, dateOfBirth");
+  if (!(fullName && email && password && address && phone && gender && dateOfBirth && nationalID)) {
+    return res.json("All fields required: fullName, email, password, address, phone, gender, dateOfBirth, nationalID");
   }
 
   const emailLowerCase = email.toLowerCase();
@@ -51,6 +52,7 @@ router.post("/register", async (req, res) => {
       phone,
       gender,
       dateOfBirth,
+      nationalID
     });
     const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -98,6 +100,24 @@ router.get("/me", authMiddleware, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     return res.json(user);
+  } catch (err) {
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/status/:id", authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.status = !user.status;
+    await user.save();
+    return res.json({ 
+      message: user.status ? "User activated successfully!" : "User deactivated successfully!",
+      status: user.status
+    });
   } catch (err) {
     return res.status(500).json({ error: "Server error" });
   }
