@@ -134,6 +134,21 @@ const getPastPolls = async (req, res) => {
   }
 };
 
+const deletePoll = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const poll = await Poll.findById(id);
+    
+    if (!poll) {
+      return res.status(404).json({ message: "Poll not found" });
+    }
+
+    await Poll.findByIdAndDelete(id);
+    res.json({ message: "Poll deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   createPoll,
@@ -141,5 +156,6 @@ module.exports = {
   getAllPolls,
   getPollID,
   getPastPolls,
-  votePoll
+  votePoll,
+  deletePoll
 };

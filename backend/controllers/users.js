@@ -1,5 +1,9 @@
 const User = require('../models/User');
 const mongoose = require('mongoose');
+const emailRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+const dateOfBirthRegex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
 
 const registerUser = async (req, res) => {
     const { fullName, email, password, address, phone, gender, dateOfBirth, nationalID } = req.body;
@@ -120,7 +124,6 @@ const changeStatus = async (req, res) => {
       return res.status(500).json({ error: "Server error" });
     }
   }
-
 
 module.exports = {
     registerUser,
