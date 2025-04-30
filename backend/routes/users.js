@@ -1,8 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/auth");
 const adminMiddleware = require("../middleware/isAdmin");
 const {
@@ -10,12 +7,18 @@ const {
   loginUser,
   getUser,
   changeStatus,
-  getAllUsers
+  getAllUsers,
+  forgotPassword,
+  resetPassword
 } = require("../controllers/users");
 
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
+
+router.post("/forgot-password", forgotPassword);
+
+router.post("/reset-password", resetPassword);
 
 router.get("/me", authMiddleware, getUser);
 
