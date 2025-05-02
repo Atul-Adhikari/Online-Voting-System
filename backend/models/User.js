@@ -43,6 +43,10 @@ const UserSchema = mongoose.Schema(
     nationalID: {
       type: String,
       required: true
+    },
+    resetPasswordToken: {
+      type: String,
+      default: null
     }
   },
   { timestamps: true }

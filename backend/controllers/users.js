@@ -1,9 +1,108 @@
 const User = require('../models/User');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const emailRegex =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
 const dateOfBirthRegex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/;
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: 465,
+  secure: true,
+  auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+  }
+});
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
+    const emailLowerCase = email.toLowerCase();
+    if (!emailRegex.test(emailLowerCase)) {
+      return res.status(400).json({ error: "Please enter a valid email address" });
+    }
+
+    const user = await User.findOne({ email: emailLowerCase });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const resetToken = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    user.resetPasswordToken = resetToken;
+    await user.save();
+
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: user.email,
+      subject: 'Password Reset Request',
+      html: `
+        <p>You requested a password reset</p>
+        <p>Click this <a href="${resetUrl}">link</a> to reset your password</p>
+        <p>This link will expire in 1 hour</p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.json({ message: "Password reset email sent" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!(token && newPassword)) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        error: "Please enter a secure password. A secure password contains: At least 8 characters, at least one number, and at least one special character"
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({
+      _id: decoded.user_id,
+      resetPasswordToken: token
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired reset token" });
+    }
+
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+    
+    user.password = encryptedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(400).json({ error: "Invalid reset token" });
+    }
+    res.status(500).json({ error: "Error processing request" });
+  }
+};
 
 const registerUser = async (req, res) => {
     const { fullName, email, password, address, phone, gender, dateOfBirth, nationalID } = req.body;
@@ -63,7 +162,7 @@ const registerUser = async (req, res) => {
         accessToken: token,
       });
     } catch (err) {
-      return res.json(err);
+      res.status(500).json({ error: err.message });
     }
 }
 
@@ -130,5 +229,7 @@ module.exports = {
     loginUser,
     getUser,
     changeStatus,
-    getAllUsers
+    getAllUsers,
+    forgotPassword,
+    resetPassword
 };
