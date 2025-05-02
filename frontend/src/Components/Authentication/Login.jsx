@@ -19,12 +19,31 @@ const Login = () => {
     const userData = { email, password };
 
     try {
-      const response = await axios.post('https://your-backend-api.com/login', userData);
+      const response = await axios.post('http://localhost:3333/api/users/login', userData);
+
       console.log('User Logged In:', response.data);
-      navigate('/dashboard');
+
+      const { accessToken, fullName, email: userEmail, role } = response.data;
+
+      if (accessToken) {
+        // Store user data
+        localStorage.setItem("token", accessToken);
+        localStorage.setItem("userName", fullName);
+        localStorage.setItem("userEmail", userEmail);
+        localStorage.setItem("role", role); 
+
+        // Redirect based on role
+        if (role === "admin") {
+          navigate('/admin');
+        } else {
+          navigate('/userDashboard');
+        }
+      } else {
+        setError('Invalid login. No token returned.');
+      }
     } catch (err) {
-      console.error('Error logging in:', err);
-      setError('Invalid credentials. Please try again.');
+      console.error('Error logging in:', err.response?.data || err.message);
+      setError(err.response?.data?.error || 'Invalid credentials. Please try again.');
     } finally {
       setLoading(false);
     }
