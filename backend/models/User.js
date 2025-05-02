@@ -36,6 +36,14 @@ const UserSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: Boolean,
+      default: false
+    },
+    nationalID: {
+      type: String,
+      required: true
+    }
   },
   { timestamps: true }
 );
