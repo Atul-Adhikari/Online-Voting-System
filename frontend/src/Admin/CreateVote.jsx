@@ -7,7 +7,7 @@ const CreateVote = () => {
     description: "",
     options: [{ text: "", image: "" }, { text: "", image: "" }],
     duration: "",
-    province: ""
+    province: "",
   });
 
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ const CreateVote = () => {
     "Gandaki Province",
     "Lumbini Province",
     "Karnali Province",
-    "Sudurpashchim Province"
+    "Sudurpashchim Province",
   ];
 
   const handleChange = (e, index) => {
@@ -35,10 +35,18 @@ const CreateVote = () => {
   };
 
   const addOption = () => {
-    if (form.options.length < 10 && form.options[form.options.length - 1].text.trim() !== "") {
-      setForm({ ...form, options: [...form.options, { text: "", image: "" }] });
+    if (
+      form.options.length < 10 &&
+      form.options[form.options.length - 1].text.trim() !== ""
+    ) {
+      setForm({
+        ...form,
+        options: [...form.options, { text: "", image: "" }],
+      });
     } else {
-      setError("Option cannot be empty. Please fill the previous option before adding a new one.");
+      setError(
+        "Option cannot be empty. Please fill the previous option before adding a new one."
+      );
     }
   };
 
@@ -71,7 +79,11 @@ const CreateVote = () => {
   };
 
   const validateForm = () => {
-    if (!form.title || !form.duration || form.options.some(opt => !opt.text.trim())) {
+    if (
+      !form.title ||
+      !form.duration ||
+      form.options.some((opt) => !opt.text.trim())
+    ) {
       setError("Please fill in all fields and ensure no option is empty.");
       return false;
     }
@@ -94,24 +106,37 @@ const CreateVote = () => {
     }
 
     try {
-      const response = await fetch("/api/polls", {
+      // Send POST request to your backend's poll creation endpoint
+      const response = await fetch("http://localhost:3333/api/polls", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,  // Include JWT token for authentication
+        },
         body: JSON.stringify({
           title: form.title.trim(),
           description: form.description.trim(),
-          options: form.options.map((option) => ({ text: option.text.trim(), image: option.image })),
+          options: form.options.map((option) => ({
+            text: option.text.trim(),
+            image: option.image,
+          })),
           duration: Number(form.duration),
           province: form.province.trim(),
-          status: "Active"
-        })
+          status: "Active",
+        }),
       });
 
       if (!response.ok) throw new Error("Poll creation failed");
 
       await response.json();
       setSuccess("Poll created successfully!");
-      setForm({ title: "", description: "", options: [{ text: "", image: "" }, { text: "", image: "" }], duration: "", province: "" });
+      setForm({
+        title: "",
+        description: "",
+        options: [{ text: "", image: "" }, { text: "", image: "" }],
+        duration: "",
+        province: "",
+      });
     } catch (err) {
       setError(err.message || "Poll creation failed. Please try again.");
     } finally {
@@ -153,7 +178,9 @@ const CreateVote = () => {
         >
           <option value="">Select Province</option>
           {nepaliProvinces.map((prov, idx) => (
-            <option key={idx} value={prov}>{prov}</option>
+            <option key={idx} value={prov}>
+              {prov}
+            </option>
           ))}
         </select>
 
@@ -180,7 +207,9 @@ const CreateVote = () => {
                 className="file-input"
               />
             </div>
-            {option.image && <img src={option.image} alt={`Option ${idx + 1}`} className="option-image" />}
+            {option.image && (
+              <img src={option.image} alt={`Option ${idx + 1}`} className="option-image" />
+            )}
             {form.options.length > 2 && (
               <button
                 type="button"
@@ -193,24 +222,22 @@ const CreateVote = () => {
           </div>
         ))}
 
-        <button
-          type="button"
-          onClick={addOption}
-          className="add-option-btn"
-        >
+        <button type="button" onClick={addOption} className="add-option-btn">
           + Add Option
         </button>
 
         <input
-          name="duration"
-          value={form.duration}
-          onChange={handleChange}
-          placeholder="Duration (in hours)"
-          type="number"
-          min="1"
-          className="duration-input"
-          required
-        />
+  name="duration"
+  value={form.duration}
+  onChange={handleChange}
+  placeholder="Duration (in hours)"
+  type="number"
+  min="0.01"
+  step="0.01"
+  className="duration-input"
+  required
+/>
+
 
         <button
           type="submit"

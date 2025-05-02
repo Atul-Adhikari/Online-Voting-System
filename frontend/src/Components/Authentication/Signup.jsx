@@ -44,26 +44,33 @@ const Signup = () => {
     setLoading(true);
     setError('');
 
-    const userData = {
-      fullName,
+    const formattedUserData = {
+      fullName: `${fullName.firstName} ${fullName.lastName}`,
       email,
       password,
       gender,
-      dob,
+      dateOfBirth: dob,
       phone,
-      province,
+      address: province, // Matches backend's expected field
     };
 
     try {
-      const response = await axios.post('https://your-backend-api.com/signup', userData);
+      const response = await axios.post('http://localhost:3333/api/users/register', formattedUserData);
+
       console.log('Signup successful:', response.data);
 
-      await axios.post('https://your-backend-api.com/send-otp', { phone });
-      alert('OTP sent to your phone number!');
-      navigate('/verify-otp', { state: { phone } });
+      if (response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
+        alert('Registration successful!');
+        navigate('/userDashboard');
+      } else if (response.data.error) {
+        setError(response.data.error);
+      } else {
+        setError('Unexpected response. Please try again.');
+      }
     } catch (err) {
-      console.error('Signup error:', err);
-      setError('There was an error signing up. Please try again later.');
+      console.error('Signup error:', err.response?.data || err.message);
+      setError(err.response?.data?.error || 'There was an error signing up. Please try again later.');
     } finally {
       setLoading(false);
     }
