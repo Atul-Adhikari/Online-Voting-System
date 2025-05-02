@@ -6,52 +6,20 @@ const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [filteredRole, setFilteredRole] = useState("All");
 
-  // Fetch users from API (mocked for now)
+  // ✅ Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // TODO: Replace with your real API
-        // const response = await fetch("https://your-api-url.com/users");
-        // const data = await response.json();
-        const sampleData = [
-          {
-            id: 1,
-            firstName: "Aarav",
-            lastName: "Shrestha",
-            phone: "9800000001",
-            email: "aravsssssssssssssssss@example.com",
-            dob: "2000-01-15",
-            gender: "Male",
-            role: "Voter",
-            city: "Koshi ",
-            profileImage: "https://via.placeholder.com/40"
+        const response = await fetch("http://localhost:3333/api/users", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          {
-            id: 2,
-            firstName: "Sita",
-            lastName: "Bhandari",
-            phone: "9800000002",
-            email: "sita.b@example.com",
-            dob: "1995-05-10",
-            gender: "Female",
-            role: "Admin",
-            city: "Gandaki",  
-            profileImage: "https://via.placeholder.com/40"
-          },
-          {
-            id: 3,
-            firstName: "Ravi",
-            lastName: "Karki",
-            phone: "9800000003",
-            email: "ravi.k@example.com",
-            dob: "1998-08-22",
-            gender: "Male",
-            role: "Voter",
-            city: "Bagmati",  
-            profileImage: defaultUserImage
-          }
-        ];
-        setUsers(sampleData); // replace with setUsers(data)
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch users");
+
+        const data = await response.json();
+        setUsers(data);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }
@@ -60,12 +28,14 @@ const UsersList = () => {
     fetchUsers();
   }, []);
 
-  // Delete user from API (prepared)
+  // ✅ Delete user from backend
   const deleteUserFromAPI = async (id) => {
     try {
-      // TODO: Replace with your real API endpoint
-      const response = await fetch(`https://your-api-url.com/users/${id}`, {
-        method: "DELETE"
+      const response = await fetch(`http://localhost:3333/api/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
 
       if (!response.ok) throw new Error("Failed to delete user");
@@ -84,7 +54,7 @@ const UsersList = () => {
     const success = await deleteUserFromAPI(id);
 
     if (success) {
-      setUsers((prev) => prev.filter((user) => user.id !== id));
+      setUsers((prev) => prev.filter((user) => user._id !== id)); // use _id from MongoDB
     } else {
       alert("Failed to delete user from server.");
     }
@@ -101,13 +71,10 @@ const UsersList = () => {
 
       <div className="filter-bar">
         <label>Filter by Role: </label>
-        <select
-          value={filteredRole}
-          onChange={(e) => setFilteredRole(e.target.value)}
-        >
+        <select value={filteredRole} onChange={(e) => setFilteredRole(e.target.value)}>
           <option value="All">All</option>
-          <option value="Admin">Admin</option>
-          <option value="Voter">Voter</option>
+          <option value="admin">Admin</option>
+          <option value="user">Voter</option>
         </select>
       </div>
 
@@ -117,20 +84,19 @@ const UsersList = () => {
             <tr>
               <th>#</th>
               <th>Photo</th>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Phone</th>
+              <th>Full Name</th>
               <th>Email</th>
+              <th>Phone</th>
               <th>DOB</th>
               <th>Gender</th>
               <th>Role</th>
-              <th>Province</th> {/* New City Column */}
+              <th>Province</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.map((user, index) => (
-              <tr key={user.id}>
+              <tr key={user._id}>
                 <td>{index + 1}</td>
                 <td>
                   <img
@@ -139,21 +105,18 @@ const UsersList = () => {
                     className="user-photo"
                   />
                 </td>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.phone}</td>
+                <td>{user.fullName}</td>
                 <td className="email">{user.email}</td>
-                <td>{user.dob}</td>
+                <td>{user.phone}</td>
+                <td>{user.dateOfBirth}</td>
                 <td>{user.gender}</td>
                 <td>
-                  <span className={`role ${user.role.toLowerCase()}`}>
-                    {user.role}
-                  </span>
+                  <span className={`role ${user.role.toLowerCase()}`}>{user.role}</span>
                 </td>
-                <td>{user.city}</td> {/* Display the city here */}
+                <td>{user.address}</td>
                 <td>
                   <button
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(user._id)}
                     className="delete-btn"
                     title="Delete User"
                   >

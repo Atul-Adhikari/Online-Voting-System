@@ -11,7 +11,6 @@ const VoteList = () => {
     province: "",
     options: []
   });
-
   const [filterProvince, setFilterProvince] = useState("");
 
   const nepaliProvinces = [
@@ -24,56 +23,37 @@ const VoteList = () => {
     "Sudurpashchim Province"
   ];
 
-  useEffect(() => {
-    // 🟡 Backend: Fetch polls from the API
-    /*
-    fetch("/api/polls")
-      .then((res) => res.json())
-      .then((data) => setPolls(data))
-      .catch((err) => console.error("Fetch error:", err));
-    */
+  const fetchPolls = async () => {
+    try {
+      const res = await fetch("http://localhost:3333/api/polls", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
+      const data = await res.json();
+      setPolls(data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    }
+  };
 
-    const dummyPolls = [
-      {
-        id: 1,
-        title: "Best Programming Language?",
-        description: "Vote for your favorite language in 2025.",
-        createdAt: "2025-03-01",
-        duration: 48,
-        status: "Active",
-        province: "Bagmati Province",
-        options: [
-          { text: "JavaScript", votes: 45, image: "https://via.placeholder.com/40" },
-          { text: "Python", votes: 30, image: "https://via.placeholder.com/40" },
-          { text: "Rust", votes: 25, image: "https://via.placeholder.com/40" }
-        ],
-      },
-      {
-        id: 2,
-        title: "Preferred Frontend Framework",
-        description: "React vs Vue vs Angular showdown!",
-        createdAt: "2025-02-25",
-        duration: 72,
-        status: "Ended",
-        province: "Gandaki Province",
-        options: [
-          { text: "React", votes: 60, image: "https://via.placeholder.com/40" },
-          { text: "Vue", votes: 25, image: "https://via.placeholder.com/40" },
-          { text: "Angular", votes: 15, image: "https://via.placeholder.com/40" }
-        ],
-      },
-    ];
-    setPolls(dummyPolls);
+  useEffect(() => {
+    fetchPolls();
   }, []);
 
   const handleEditClick = (poll) => {
-    setEditingPollId(poll.id);
+    setEditingPollId(poll._id);
     setEditForm({
       title: poll.title,
       description: poll.description,
       duration: poll.duration,
-      province: poll.province,
-      options: poll.options.map((opt) => ({ ...opt }))
+      province: poll.address,
+      options: poll.options.map((opt) => ({
+        text: opt.name,
+        image: opt.image,
+        votes: opt.votes,
+        voters: opt.voters
+      }))
     });
   };
 
@@ -83,17 +63,17 @@ const VoteList = () => {
   };
 
   const handleOptionChange = (index, value) => {
-    const newOptions = [...editForm.options];
-    newOptions[index].text = value;
-    setEditForm((prev) => ({ ...prev, options: newOptions }));
+    const updated = [...editForm.options];
+    updated[index].text = value;
+    setEditForm((prev) => ({ ...prev, options: updated }));
   };
 
   const handleOptionImageChange = (e, index) => {
     const file = e.target.files[0];
     if (file) {
-      const newOptions = [...editForm.options];
-      newOptions[index].image = URL.createObjectURL(file);
-      setEditForm((prev) => ({ ...prev, options: newOptions }));
+      const updated = [...editForm.options];
+      updated[index].image = URL.createObjectURL(file); // preview only
+      setEditForm((prev) => ({ ...prev, options: updated }));
     }
   };
 
@@ -105,57 +85,64 @@ const VoteList = () => {
   };
 
   const removeOption = (index) => {
-    if (editForm.options.length <= 2) return;
     const updated = [...editForm.options];
     updated.splice(index, 1);
     setEditForm((prev) => ({ ...prev, options: updated }));
   };
 
   const saveEdit = async () => {
-    if (!editForm.title.trim() || editForm.options.some((opt) => !opt.text.trim())) {
-      alert("Please fill out the title and all options.");
-      return;
+    try {
+      const res = await fetch(`http://localhost:3333/api/polls/${editingPollId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          title: editForm.title,
+          description: editForm.description,
+          duration: editForm.duration,
+          province: editForm.province,
+          options: editForm.options,
+        }),
+      });
+      if (!res.ok) throw new Error("Update failed");
+      await fetchPolls();
+      setEditingPollId(null);
+    } catch (err) {
+      alert("Failed to update poll");
+      console.error(err);
     }
-
-    // 🟡 Backend: Update poll in the database
-    /*
-    await fetch(`/api/polls/${editingPollId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editForm),
-    });
-    */
-
-    setPolls((prev) =>
-      prev.map((poll) =>
-        poll.id === editingPollId ? { ...poll, ...editForm } : poll
-      )
-    );
-    setEditingPollId(null);
   };
 
   const manuallyClosePoll = async (id) => {
-    // 🟡 Backend: Close poll via API
-    /*
-    await fetch(`/api/polls/${id}/close`, {
-      method: "POST",
-    });
-    */
-    setPolls((prev) =>
-      prev.map((poll) =>
-        poll.id === id ? { ...poll, status: "Ended" } : poll
-      )
-    );
+    try {
+      await fetch(`http://localhost:3333/api/polls/${id}/close`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
+      await fetchPolls();
+    } catch (err) {
+      alert("Failed to close poll");
+      console.error(err);
+    }
   };
 
   const deletePoll = async (id) => {
-    // 🟡 Backend: Delete poll
-    /*
-    await fetch(`/api/polls/${id}`, {
-      method: "DELETE",
-    });
-    */
-    setPolls((prev) => prev.filter((poll) => poll.id !== id));
+    try {
+      await fetch(`http://localhost:3333/api/polls/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        }
+      });
+      setPolls((prev) => prev.filter((poll) => poll._id !== id));
+    } catch (err) {
+      alert("Failed to delete poll");
+      console.error(err);
+    }
   };
 
   const handleDelete = (id) => {
@@ -168,7 +155,7 @@ const VoteList = () => {
     options.reduce((sum, opt) => sum + opt.votes, 0);
 
   const filteredPolls = filterProvince
-    ? polls.filter((poll) => poll.province === filterProvince)
+    ? polls.filter((poll) => poll.address === filterProvince)
     : polls;
 
   return (
@@ -195,8 +182,8 @@ const VoteList = () => {
           {filteredPolls.map((poll) => {
             const totalVotes = calculateTotalVotes(poll.options);
             return (
-              <div className="poll-card" key={poll.id}>
-                {editingPollId === poll.id && poll.status === "Active" ? (
+              <div className="poll-card" key={poll._id}>
+                {editingPollId === poll._id && poll.status === "Active" ? (
                   <>
                     <input
                       type="text"
@@ -241,19 +228,18 @@ const VoteList = () => {
                             type="text"
                             value={opt.text}
                             onChange={(e) => handleOptionChange(idx, e.target.value)}
-                            placeholder={`Option ${idx + 1}`}
                             className="edit-input"
+                            placeholder={`Option ${idx + 1}`}
                           />
                           <input
                             type="file"
                             onChange={(e) => handleOptionImageChange(e, idx)}
                             className="edit-input"
                           />
-                          {opt.image && <img src={opt.image} alt={`Option ${idx + 1}`} className="option-image" />}
-                          <button
-                            onClick={() => removeOption(idx)}
-                            className="remove-btn"
-                          >
+                          {opt.image && (
+                            <img src={opt.image} alt={`Option ${idx + 1}`} className="option-image" />
+                          )}
+                          <button onClick={() => removeOption(idx)} className="remove-btn">
                             <i className="fa fa-times"></i>
                           </button>
                         </div>
@@ -261,11 +247,6 @@ const VoteList = () => {
                       <button onClick={addOption} className="action-btn save-btn">
                         <i className="fa fa-plus"></i> Add Option
                       </button>
-                    </div>
-                    <div className="poll-meta">
-                      <span>Created: {poll.createdAt}</span>
-                      <span>Duration: {poll.duration} hrs</span>
-                      <span className={`poll-status ${poll.status.toLowerCase()}`}>{poll.status}</span>
                     </div>
                     <div className="poll-actions">
                       <button onClick={saveEdit} className="action-btn save-btn">
@@ -281,7 +262,7 @@ const VoteList = () => {
                     <h3 className="poll-title">{poll.title}</h3>
                     <p className="poll-desc">{poll.description}</p>
                     <div className="poll-meta">
-                      <span>Created: {poll.createdAt}</span>
+                      <span>Created: {new Date(poll.createdAt).toLocaleString()}</span>
                       <span>Duration: {poll.duration} hrs</span>
                       <span className={`poll-status ${poll.status.toLowerCase()}`}>{poll.status}</span>
                     </div>
@@ -290,12 +271,9 @@ const VoteList = () => {
                         const percentage = totalVotes ? Math.round((opt.votes / totalVotes) * 100) : 0;
                         return (
                           <li key={index} className="poll-option">
-                            <span>{opt.text}</span>
+                            <span>{opt.name}</span>
                             <div className="poll-bar">
-                              <div
-                                className="poll-bar-fill"
-                                style={{ width: `${percentage}%` }}
-                              ></div>
+                              <div className="poll-bar-fill" style={{ width: `${percentage}%` }}></div>
                             </div>
                             <span className="poll-percent">{percentage}%</span>
                           </li>
@@ -308,12 +286,12 @@ const VoteList = () => {
                           <button onClick={() => handleEditClick(poll)} className="action-btn edit-btn">
                             <i className="fa fa-pen-to-square"></i> Edit
                           </button>
-                          <button onClick={() => manuallyClosePoll(poll.id)} className="action-btn close-btn">
+                          <button onClick={() => manuallyClosePoll(poll._id)} className="action-btn close-btn">
                             <i className="fa fa-ban"></i> Close
                           </button>
                         </>
                       )}
-                      <button id="delete-btn" onClick={() => handleDelete(poll.id)} className="action-btn delete-btn">
+                      <button onClick={() => handleDelete(poll._id)} className="action-btn delete-btn">
                         <i className="fa fa-trash"></i> Delete
                       </button>
                     </div>
