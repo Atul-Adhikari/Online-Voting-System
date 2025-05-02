@@ -94,8 +94,8 @@ const votePoll = async (req, res) => {
 
 const getPollID = async (req, res) => {
   try {
-    const { pollId } = req.params;
-    const poll = await Poll.findById(pollId);
+    const { id } = req.params;
+    const poll = await Poll.findById(id);
     if (!poll) return res.status(404).json({ message: "Poll not found" });
 
     res.json({
@@ -103,6 +103,7 @@ const getPollID = async (req, res) => {
       description: poll.description,
       options: poll.options.map(option => ({
         name: option.name,
+        imageUrl: option.imageUrl,
         votes: option.votes
       }))
     });
@@ -124,6 +125,7 @@ const getPastPolls = async (req, res) => {
         title: poll.title,
         winner: winner ? winner.name : null,
         votes: winner ? winner.votes : 0,
+        image: winner? winner.imageUrl: null,
         year: new Date(poll.createdAt).getFullYear()
       };
     }).filter(Boolean);

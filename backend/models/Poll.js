@@ -9,6 +9,7 @@ const PollSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       votes: { type: Number, default: 0 },
+      imageUrl: { type: String },
       voters: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
     }
   ],
