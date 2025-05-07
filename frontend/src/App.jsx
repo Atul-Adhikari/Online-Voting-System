@@ -31,9 +31,18 @@ function App() {
           token ? <UserDashboard /> :
           <SplashPage />
         } />
+        
+        <Route path="/userDashboard" element={<UserDashboard/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/logout" element={<LogoutMessage />} />
+
+
+        <Route path="/" element={<SplashPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/userDashboard/*" element={<UserDashboard />} />
+        <Route path="/logout" element={<LogoutMessage/>} />
+
 
         {/* User Dashboard */}
         <Route path="/userDashboard/*" element={
