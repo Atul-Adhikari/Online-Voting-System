@@ -6,11 +6,10 @@ const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [filteredRole, setFilteredRole] = useState("All");
 
-  // ✅ Fetch users from backend
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:3333/api/users", {
+        const response = await fetch("http://localhost:3333/users/all", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -28,10 +27,9 @@ const UsersList = () => {
     fetchUsers();
   }, []);
 
-  // ✅ Delete user from backend
   const deleteUserFromAPI = async (id) => {
     try {
-      const response = await fetch(`http://localhost:3333/api/users/${id}`, {
+      const response = await fetch(`http://localhost:3333/users/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -47,6 +45,29 @@ const UsersList = () => {
     }
   };
 
+  const verifyUserStatus = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3333/users/status/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to update user status");
+
+      const result = await response.json();
+
+      setUsers((prev) =>
+        prev.map((user) =>
+          user._id === id ? { ...user, status: result.status } : user
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
   const handleDelete = async (id) => {
     const confirmed = window.confirm("Are you sure you want to delete this user?");
     if (!confirmed) return;
@@ -54,7 +75,7 @@ const UsersList = () => {
     const success = await deleteUserFromAPI(id);
 
     if (success) {
-      setUsers((prev) => prev.filter((user) => user._id !== id)); // use _id from MongoDB
+      setUsers((prev) => prev.filter((user) => user._id !== id));
     } else {
       alert("Failed to delete user from server.");
     }
@@ -63,14 +84,16 @@ const UsersList = () => {
   const filteredUsers =
     filteredRole === "All"
       ? users
-      : users.filter((user) => user.role.toLowerCase() === filteredRole.toLowerCase());
+      : users.filter(
+          (user) => user.role.toLowerCase() === filteredRole.toLowerCase()
+        );
 
   return (
     <div className="users-container">
       <h2 className="users-heading">Registered Users</h2>
 
       <div className="filter-bar">
-        <label>Filter by Role: </label>
+        <label>Filter by Role:</label>
         <select value={filteredRole} onChange={(e) => setFilteredRole(e.target.value)}>
           <option value="All">All</option>
           <option value="admin">Admin</option>
@@ -91,6 +114,8 @@ const UsersList = () => {
               <th>Gender</th>
               <th>Role</th>
               <th>Province</th>
+              <th>National ID</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -108,12 +133,32 @@ const UsersList = () => {
                 <td>{user.fullName}</td>
                 <td className="email">{user.email}</td>
                 <td>{user.phone}</td>
-                <td>{user.dateOfBirth}</td>
+                <td>{user.dateOfBirth?.substring(0, 10)}</td>
                 <td>{user.gender}</td>
                 <td>
                   <span className={`role ${user.role.toLowerCase()}`}>{user.role}</span>
                 </td>
                 <td>{user.address}</td>
+                <td>{user.nationalID}</td>
+                <td>
+                  <span
+                    className={
+                      user.status ? "status-active" : "status-inactive"
+                    }
+                  >
+                    {user.status ? "Verified" : "Pending"}
+                  </span>
+                  {!user.status && (
+                    <div>
+                      <button
+                        className="verify-btn"
+                        onClick={() => verifyUserStatus(user._id)}
+                      >
+                        Verify
+                      </button>
+                    </div>
+                  )}
+                </td>
                 <td>
                   <button
                     onClick={() => handleDelete(user._id)}

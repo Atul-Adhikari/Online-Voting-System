@@ -1,3 +1,6 @@
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 const User = require('../models/User');
 const mongoose = require('mongoose');
 const nodemailer = require('nodemailer');
@@ -147,20 +150,22 @@ const registerUser = async (req, res) => {
         dateOfBirth,
         nationalID
       });
-      const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ user_id: user._id, role: user.role }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
   
       return res.json({
-        fullName,
-        email,
-        address,
-        phone,
-        gender,
-        dateOfBirth,
+        fullName: user.fullName,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
+        gender: user.gender,
+        dateOfBirth: user.dateOfBirth,
+        nationalID: user.nationalID,
         createdAt: user.createdAt,
-        accessToken: token,
+        accessToken: token
       });
+      
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -179,7 +184,8 @@ const loginUser =  async (req, res) => {
       const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
         expiresIn: "1d",
       });
-      return res.json({ fullName: user.fullName, email, accessToken: token });
+
+      return res.json({ fullName: user.fullName, email, role: user.role, accessToken: token });
     } else {
       return res.json({ error: "Incorrect email address or password" });
     }

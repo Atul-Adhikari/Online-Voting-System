@@ -25,7 +25,7 @@ const VoteList = () => {
 
   const fetchPolls = async () => {
     try {
-      const res = await fetch("http://localhost:3333/api/polls", {
+      const res = await fetch("http://localhost:3333/polls", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         }
@@ -68,12 +68,24 @@ const VoteList = () => {
     setEditForm((prev) => ({ ...prev, options: updated }));
   };
 
-  const handleOptionImageChange = (e, index) => {
+  const handleOptionImageChange = async (e, index) => {
     const file = e.target.files[0];
     if (file) {
-      const updated = [...editForm.options];
-      updated[index].image = URL.createObjectURL(file); // preview only
-      setEditForm((prev) => ({ ...prev, options: updated }));
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const res = await fetch("http://localhost:3333/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        const updated = [...editForm.options];
+        updated[index].image = data.imageUrl;
+        setEditForm((prev) => ({ ...prev, options: updated }));
+      } catch (err) {
+        console.error("Image upload failed:", err);
+      }
     }
   };
 
@@ -92,7 +104,7 @@ const VoteList = () => {
 
   const saveEdit = async () => {
     try {
-      const res = await fetch(`http://localhost:3333/api/polls/${editingPollId}`, {
+      const res = await fetch(`http://localhost:3333/polls/${editingPollId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +113,7 @@ const VoteList = () => {
         body: JSON.stringify({
           title: editForm.title,
           description: editForm.description,
-          duration: editForm.duration,
+          duration: Number(editForm.duration),
           province: editForm.province,
           options: editForm.options,
         }),
@@ -117,7 +129,7 @@ const VoteList = () => {
 
   const manuallyClosePoll = async (id) => {
     try {
-      await fetch(`http://localhost:3333/api/polls/${id}/close`, {
+      await fetch(`http://localhost:3333/polls/${id}/close`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -132,7 +144,7 @@ const VoteList = () => {
 
   const deletePoll = async (id) => {
     try {
-      await fetch(`http://localhost:3333/api/polls/${id}`, {
+      await fetch(`http://localhost:3333/polls/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -183,7 +195,7 @@ const VoteList = () => {
             const totalVotes = calculateTotalVotes(poll.options);
             return (
               <div className="poll-card" key={poll._id}>
-                {editingPollId === poll._id && poll.status === "Active" ? (
+                {editingPollId === poll._id && poll.status?.toLowerCase() === "active" ? (
                   <>
                     <input
                       type="text"
@@ -264,7 +276,7 @@ const VoteList = () => {
                     <div className="poll-meta">
                       <span>Created: {new Date(poll.createdAt).toLocaleString()}</span>
                       <span>Duration: {poll.duration} hrs</span>
-                      <span className={`poll-status ${poll.status.toLowerCase()}`}>{poll.status}</span>
+                      <span className={`poll-status ${poll.status?.toLowerCase()}`}>{poll.status}</span>
                     </div>
                     <ul className="poll-options">
                       {poll.options.map((opt, index) => {
@@ -281,7 +293,7 @@ const VoteList = () => {
                       })}
                     </ul>
                     <div className="poll-actions">
-                      {poll.status === "Active" && (
+                      {poll.status?.toLowerCase() === "active" && (
                         <>
                           <button onClick={() => handleEditClick(poll)} className="action-btn edit-btn">
                             <i className="fa fa-pen-to-square"></i> Edit

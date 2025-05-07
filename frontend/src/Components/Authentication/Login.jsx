@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';  
 import axios from 'axios';
 import './Auth.css';
 import logoImage from '../../assets/Logo2.png';
+import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,29 +11,33 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setAuth } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
+    if (!navigator.onLine) {
+      setError("You're offline. Please check your internet connection.");
+      setLoading(false);
+      return;
+    }
+
     const userData = { email, password };
 
     try {
-      const response = await axios.post('http://localhost:3333/api/users/login', userData);
-
-      console.log('User Logged In:', response.data);
-
+      const response = await axios.post('http://localhost:3333/users/login', userData);
       const { accessToken, fullName, email: userEmail, role } = response.data;
 
       if (accessToken) {
-        // Store user data
         localStorage.setItem("token", accessToken);
         localStorage.setItem("userName", fullName);
         localStorage.setItem("userEmail", userEmail);
-        localStorage.setItem("role", role); 
+        localStorage.setItem("role", role);
 
-        // Redirect based on role
+        setAuth({ token: accessToken, role });
+
         if (role === "admin") {
           navigate('/admin');
         } else {
@@ -86,6 +91,10 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="forgot-password">
+              <a href="/forgot-password">Forgot Password?</a>
             </div>
 
             <button type="submit" disabled={loading}>

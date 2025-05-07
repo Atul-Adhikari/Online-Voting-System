@@ -289,6 +289,53 @@ p a:hover {
   margin-top: -10px;
   margin-bottom: 10px;
 }
+/* Forgot Password Link */
+.forgot-password {
+  text-align: right;
+  margin-top: -6px;
+  margin-bottom: 0px;
+  padding-right: 2px;
+}
+
+.forgot-password a {
+  font-size: 14px;
+  color: #1c103a;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+}
+
+.forgot-password a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: #ff5f6d;
+  transition: width 0.3s ease;
+}
+
+.forgot-password a:hover::after {
+  width: 100%;
+}
+
+.forgot-password a:hover {
+  color: #ff5f6d;
+}
+/* Remove glowing divider for single-panel pages */
+.auth-container.no-divider::before {
+  display: none;
+}
+
+/* Success message styling */
+.success-message {
+  color: #198754;
+  font-size: 16px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
 
 /* Animations */
 @keyframes slideFadeIn {

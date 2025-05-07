@@ -1,11 +1,24 @@
-require("dotenv/config");
+require('dotenv').config(); 
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
+
 const app = express();
 const PORT = 3333;
 
+// ✅ Enable CORS for frontend running on localhost:5173
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json());
 
+//added
+app.use('/uploads', express.static('uploads'));
+
+// Routes
 const usersRoute = require("./routes/users");
 const pollsRoute = require("./routes/polls");
 
