@@ -5,38 +5,49 @@ import VotingComponent from "./VotingComponent";
 import ElectionInfo from "./ElectionInfo";
 import Footer from "./Footer";
 import Profile from "./Profile";
-import axios from "axios";
 
 const UserDashboard = () => {
-  const [loading, setLoading] = useState(false);
   const [elections, setElections] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const displayCandidates = () => {
-    navigate("/userDashboard/candidates");
-  };
-
   const handleLogout = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigate("/login");
-    }, 3000);
+      navigate("/logout");
   };
 
   const userProfile = {
-    name: "Nepali 123",
-    email: "nepali@example.com",
-    profilePic: "/Personal.jpg",
+    name: localStorage.getItem("userName"),
+    profilePic: "/Logo2.png",
   };
 
   useEffect(() => {
     const fetchElections = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setError("No token found");
+        return;
+      }
+
       try {
-        const response = await axios.get("http://localhost:3333/api/elections");
-        setElections(response.data);
+        const response = await fetch("http://localhost:3333/polls", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch elections.");
+        }
+
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setElections(data);
+        } else {
+          setError("Elections data is not in the expected format");
+        }
       } catch (err) {
+        console.error(err);
         setError("Failed to load election data.");
       }
     };
@@ -70,63 +81,158 @@ const UserDashboard = () => {
             <Link to="/userDashboard/electionInfo">Election Info</Link>
           </li>
           <li>
-            <Link to="/logout" onClick={handleLogout}>
+            <button onClick={handleLogout} className={styles.logoutButton}>
               Logout
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>
 
       {/* Main Content */}
       <div className={styles.mainContent}>
+
         <Routes>
           <Route
             index
             element={
               <>
-                <h2>Election Overview</h2>
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {/* Welcome Header */}
+                <h2 className={styles.dashboardTitle}>
+                  Welcome, {userProfile.name}!
+                </h2>
+                <p className={styles.dashboardSubheading}>
+                  Today is {new Date().toLocaleDateString()}
+                </p>
 
-                {elections.length > 0 ? (
-                  elections.map((election) => (
+                {/* Error Message */}
+                {error && <p className={styles.errorMessage}>{error}</p>}
+                {elections.length === 0 && (
+                  <p>No elections found.</p>
+                )}
+
+                {/* Summary Cards */}
+                <div className={styles.summaryCards}>
+                  <div className={styles.card}>
+                    <h3>Total Elections</h3>
+                    <p>{elections.length}</p>
+                  </div>
+                  <div className={styles.card}>
+                    <h3>Active Elections</h3>
+                    <p>
+                      {elections.filter((e) => e.status === "active").length}
+                    </p>
+                  </div>
+                  <div className={styles.card}>
+                    <h3>Completed Elections</h3>
+                    <p>
+                      {elections.filter((e) => e.status === "completed").length}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className={styles.recentActivity}>
+                  <h3>Election Rules</h3>
+                  <ul>
+                    <li>📝 You must be registered to vote in the election.</li>
+                    <li>
+                      🗳️ Each voter is allowed to vote only once in each
+                      election.
+                    </li>
+                    <li>
+                      🔒 Your vote is confidential and cannot be changed once
+                      submitted.
+                    </li>
+                    <li>
+                      🚫 Voting for multiple candidates in the same position
+                      will result in disqualification.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Upcoming Elections */}
+                <div className={styles.upcoming}>
+                  <h3>Upcoming Elections</h3>
+                  {elections
+                    .filter(
+                      (e) =>
+                        new Date(e.createdAt) >
+                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+                    )
+                    .map((e) => (
+                      <div key={e._id} className={styles.upcomingItem}>
+                        <strong>{e.title}</strong> — Starts:{" "}
+                        {new Date(e.createdAt).toLocaleDateString()}
+                      </div>
+                    ))}
+                </div>
+
+                {/* Election Grid */}
+                <div className={styles.electionGrid}>
+                  {elections.map((election) => (
                     <div key={election._id} className={styles.electionCard}>
-                      <h3>{election.title}</h3>
-                      <p>
-                        <strong>Description:</strong> {election.description}
+                      <div className={styles.electionHeader}>
+                        <h3>{election.title}</h3>
+                        <span
+                          className={`${styles.electionStatus} ${
+                            election.status === "active"
+                              ? styles.statusActive
+                              : styles.statusInactive
+                          }`}
+                        >
+                          {election.status || "Unknown"}
+                        </span>
+                      </div>
+                      <p className={styles.electionDescription}>
+                        {election.description}
                       </p>
-                      <p>
-                        <strong>Address:</strong> {election.address}
-                      </p>
-                      {election.status && (
+                      <div className={styles.electionMeta}>
                         <p>
-                          <strong>Status:</strong> {election.status}
+                          <strong>Address:</strong> {election.address}
                         </p>
-                      )}
-                      {election.duration && (
+                        {election.duration && (
+                          <p>
+                            <strong>Duration:</strong> {election.duration} days
+                          </p>
+                        )}
                         <p>
-                          <strong>Duration (days):</strong> {election.duration}
+                          <strong>Created At:</strong>{" "}
+                          {new Date(election.createdAt).toLocaleString()}
                         </p>
-                      )}
-                      <p>
-                        <strong>Created At:</strong>{" "}
-                        {new Date(election.createdAt).toLocaleString()}
-                      </p>
+                      </div>
 
                       {election.options?.length > 0 && (
                         <>
-                          <h4>Candidates:</h4>
-                          <ul>
+                          <h4 className={styles.candidateTitle}>Candidates</h4>
+                          <div className={styles.candidateGrid}>
                             {election.options.map((opt, idx) => (
-                              <li key={idx}>{opt}</li>
+                              <div key={idx} className={styles.candidateCard}>
+                                {opt.image ? (
+                                  <img
+                                    src={opt.image}
+                                    alt={opt.name}
+                                    className={styles.candidateImage}
+                                  />
+                                ) : (
+                                  <div
+                                    className={styles.candidateImage}
+                                    style={{ background: "#ccc" }}
+                                  />
+                                )}
+                                <div>{opt.name}</div>
+                                {opt.party && (
+                                  <div className={styles.candidateParty}>
+                                    {opt.party}
+                                  </div>
+                                )}
+                              </div>
                             ))}
-                          </ul>
+                          </div>
                         </>
                       )}
                     </div>
-                  ))
-                ) : (
-                  <p>No elections found.</p>
-                )}
+                  ))}
+                </div>
               </>
             }
           />
