@@ -28,6 +28,7 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:3333/users/login', userData);
+      console.log(response.data)
       const { accessToken, fullName, email: userEmail, role } = response.data;
 
       if (accessToken) {
@@ -35,6 +36,24 @@ const Login = () => {
         localStorage.setItem("userName", fullName);
         localStorage.setItem("userEmail", userEmail);
         localStorage.setItem("role", role);
+
+
+
+        // Fetch additional user details
+        const profileRes = await axios.get('http://localhost:3333/users/me', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
+      
+        const { gender, dateOfBirth, phone, address, nationalID } = profileRes.data;
+      
+        // 🆕 Store them in localStorage
+        localStorage.setItem("gender", gender);
+        localStorage.setItem("dob", dateOfBirth);
+        localStorage.setItem("phone", phone);
+        localStorage.setItem("address", address);
+        localStorage.setItem("nationalID", nationalID);
 
         setAuth({ token: accessToken, role });
 
