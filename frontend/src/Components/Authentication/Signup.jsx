@@ -12,6 +12,7 @@ const Signup = () => {
   const [dob, setDob] = useState('');
   const [phone, setPhone] = useState('');
   const [province, setProvince] = useState('');
+  const [nationalID, setNationalID] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -51,13 +52,14 @@ const Signup = () => {
       gender,
       dateOfBirth: dob,
       phone,
-      address: province, // Matches backend's expected field
+      address: province,
+      nationalID
     };
 
     try {
-      const response = await axios.post('http://localhost:3333/api/users/register', formattedUserData);
+      const response = await axios.post('http://localhost:3333/users/register', formattedUserData);
 
-      console.log('Signup successful:', response.data);
+      console.log('Signup successful:\n', JSON.stringify(response.data, null, 2));
 
       if (response.data.accessToken) {
         localStorage.setItem("token", response.data.accessToken);
@@ -181,6 +183,17 @@ const Signup = () => {
                   <option key={index} value={provinceOption}>{provinceOption}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="input-group">
+              <i className="fas fa-id-card"></i>
+              <input
+                type="text"
+                placeholder="National ID"
+                value={nationalID}
+                onChange={(e) => setNationalID(e.target.value)}
+                required
+              />
             </div>
 
             <div className="checkbox-container">

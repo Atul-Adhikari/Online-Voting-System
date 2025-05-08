@@ -1,31 +1,30 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthContext } from "./context/AuthContext";
 
-// Splash Page
 import SplashPage from "./Components/SplashPage";
-
-// Auth Components
 import Login from "./Components/Authentication/Login";
 import Signup from "./Components/Authentication/Signup";
+import ForgotPassword from "./Components/Authentication/ForgotPassword";
 import LogoutMessage from "./Components/LogoutMesssage";
 
-// Admin Components
 import AdminDashboard from "./Admin/AdminDashboard";
 import CreateVote from "./Admin/CreateVote";
 import VoteList from "./Admin/VoteList";
 import UsersList from "./Admin/UsersList";
 
-// User Components
 import UserDashboard from "./Components/UserDashboard";
 
 function App() {
-  const role = localStorage.getItem("role");
-  const token = localStorage.getItem("token");
+  const { auth } = useContext(AuthContext);
+
+  // Safely access token and role
+  const token = auth?.token;
+  const role = auth?.role;
 
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
         <Route path="/" element={
           role === "admin" ? <AdminDashboard /> :
           token ? <UserDashboard /> :
@@ -35,34 +34,28 @@ function App() {
         <Route path="/userDashboard" element={<UserDashboard/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/logout" element={<LogoutMessage />} />
+
+        //<Route path="/userDashboard/*" element={token ? <UserDashboard /> : <Login />} />
 
 
         <Route path="/" element={<SplashPage />} />
-        <Route path="/login" element={<Login />} />
+        //<Route path="/login" element={<Login />} />
         <Route path="/userDashboard/*" element={<UserDashboard />} />
         <Route path="/logout" element={<LogoutMessage/>} />
 
 
         {/* User Dashboard */}
-        <Route path="/userDashboard/*" element={
-          token ? <UserDashboard /> : <Login />
-        } />
+        //<Route path="/userDashboard/*" element={
+        //  token ? <UserDashboard /> : <Login />
+        //} />
 
 
-        {/* Admin Routes */}
-        <Route path="/admin" element={
-          role === "admin" ? <AdminDashboard /> : <Login />
-        } />
-        <Route path="/admin/create-vote" element={
-          role === "admin" ? <CreateVote /> : <Login />
-        } />
-        <Route path="/admin/vote-lists" element={
-          role === "admin" ? <VoteList /> : <Login />
-        } />
-        <Route path="/admin/users" element={
-          role === "admin" ? <UsersList /> : <Login />
-        } />
+        <Route path="/admin" element={role === "admin" ? <AdminDashboard /> : <Login />} />
+        <Route path="/admin/create-vote" element={role === "admin" ? <CreateVote /> : <Login />} />
+        <Route path="/admin/vote-lists" element={role === "admin" ? <VoteList /> : <Login />} />
+        <Route path="/admin/users" element={role === "admin" ? <UsersList /> : <Login />} />
       </Routes>
     </Router>
   );

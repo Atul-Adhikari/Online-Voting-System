@@ -5,11 +5,19 @@ import "./Admin.css";
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.clear(); // Clear token and user info
+    navigate("/login");   // Redirect to login page
+  };
+
   return (
     <div className="admin-dashboard">
       <div className="admin-header">
         <h1 className="admin-logo">E-मत</h1>
         <h2 className="admin-title">Admin Panel</h2>
+        <button className="logout-button" onClick={handleLogout}>
+          <i className="fas fa-sign-out-alt"></i> Logout
+        </button>
       </div>
 
       <div className="admin-cards">

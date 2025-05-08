@@ -5,9 +5,9 @@ const CreateVote = () => {
   const [form, setForm] = useState({
     title: "",
     description: "",
-    options: [{ text: "", image: "" }, { text: "", image: "" }],
+    options: [{ text: "", file: null }, { text: "", file: null }],
     duration: "",
-    province: "",
+    address: "",
   });
 
   const [error, setError] = useState("");
@@ -27,7 +27,7 @@ const CreateVote = () => {
   const handleChange = (e, index) => {
     if (e.target.name === "options") {
       const updatedOptions = [...form.options];
-      updatedOptions[index][e.target.id] = e.target.value;
+      updatedOptions[index].text = e.target.value;
       setForm({ ...form, options: updatedOptions });
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -41,7 +41,7 @@ const CreateVote = () => {
     ) {
       setForm({
         ...form,
-        options: [...form.options, { text: "", image: "" }],
+        options: [...form.options, { text: "", file: null }],
       });
     } else {
       setError(
@@ -55,25 +55,11 @@ const CreateVote = () => {
     setForm({ ...form, options: updatedOptions });
   };
 
-  const handleImageDrop = (e, index) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const updatedOptions = [...form.options];
-      updatedOptions[index].image = URL.createObjectURL(file);
-      setForm({ ...form, options: updatedOptions });
-    }
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
-
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
       const updatedOptions = [...form.options];
-      updatedOptions[index].image = URL.createObjectURL(file);
+      updatedOptions[index].file = file;
       setForm({ ...form, options: updatedOptions });
     }
   };
@@ -106,36 +92,47 @@ const CreateVote = () => {
     }
 
     try {
-      // Send POST request to your backend's poll creation endpoint
-      const response = await fetch("http://localhost:3333/api/polls", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`,  // Include JWT token for authentication
-        },
-        body: JSON.stringify({
-          title: form.title.trim(),
-          description: form.description.trim(),
-          options: form.options.map((option) => ({
-            text: option.text.trim(),
-            image: option.image,
-          })),
-          duration: Number(form.duration),
-          province: form.province.trim(),
-          status: "Active",
-        }),
+      const formData = new FormData();
+      formData.append("title", form.title.trim());
+      formData.append("description", form.description.trim());
+      formData.append("duration", Number(form.duration));
+      formData.append("address", form.address.trim());
+
+      const optionsForServer = form.options.map((opt) => ({
+        text: opt.text.trim(),
+      }));
+
+      formData.append("options", JSON.stringify(optionsForServer));
+
+      form.options.forEach((opt) => {
+        if (opt.file) {
+          formData.append("images", opt.file);
+        }
       });
 
-      if (!response.ok) throw new Error("Poll creation failed");
+      const response = await fetch("http://localhost:3333/polls", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      });
 
-      await response.json();
+      if (!response.ok) throw new Error("Poll creation failed.");
+
+      const data = await response.json();
       setSuccess("Poll created successfully!");
+        setTimeout(() => {
+      setSuccess("");
+      }, 5000); // 5 seconds
+
+
       setForm({
         title: "",
         description: "",
-        options: [{ text: "", image: "" }, { text: "", image: "" }],
+        options: [{ text: "", file: null }, { text: "", file: null }],
         duration: "",
-        province: "",
+        address: "",
       });
     } catch (err) {
       setError(err.message || "Poll creation failed. Please try again.");
@@ -165,13 +162,13 @@ const CreateVote = () => {
           name="description"
           value={form.description}
           onChange={handleChange}
-          placeholder="Poll Description (optional)"
+          placeholder="Poll Description"
           className="textarea-field"
         />
 
         <select
-          name="province"
-          value={form.province}
+          name="address"
+          value={form.address}
           onChange={handleChange}
           className="input-field"
           required
@@ -187,7 +184,6 @@ const CreateVote = () => {
         {form.options.map((option, idx) => (
           <div key={idx} className="option-group">
             <input
-              id="text"
               name="options"
               value={option.text}
               onChange={(e) => handleChange(e, idx)}
@@ -195,21 +191,22 @@ const CreateVote = () => {
               className="input-field"
               required
             />
-            <div
-              className="drop-zone"
-              onDrop={(e) => handleImageDrop(e, idx)}
-              onDragOver={handleDragOver}
-            >
-              <span>Drag & drop image or click to upload</span>
-              <input
-                type="file"
-                onChange={(e) => handleImageChange(e, idx)}
-                className="file-input"
+
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e, idx)}
+              className="file-input"
+            />
+
+            {option.file && (
+              <img
+                src={URL.createObjectURL(option.file)}
+                alt={`Preview ${idx + 1}`}
+                className="option-image"
               />
-            </div>
-            {option.image && (
-              <img src={option.image} alt={`Option ${idx + 1}`} className="option-image" />
             )}
+
             {form.options.length > 2 && (
               <button
                 type="button"
@@ -227,23 +224,18 @@ const CreateVote = () => {
         </button>
 
         <input
-  name="duration"
-  value={form.duration}
-  onChange={handleChange}
-  placeholder="Duration (in hours)"
-  type="number"
-  min="0.01"
-  step="0.01"
-  className="duration-input"
-  required
-/>
+          name="duration"
+          value={form.duration}
+          onChange={handleChange}
+          placeholder="Duration (in hours)"
+          type="number"
+          min="0.01"
+          step="0.01"
+          className="duration-input"
+          required
+        />
 
-
-        <button
-          type="submit"
-          className="submit-btn"
-          disabled={loading}
-        >
+        <button type="submit" className="submit-btn" disabled={loading}>
           {loading ? "Creating..." : "Create Poll"}
         </button>
       </form>
