@@ -4,8 +4,7 @@ import styles from "../Styles/Profile.module.css";
 
 const Profile = () => {
   const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     phone: "",
     gender: "",
@@ -65,22 +64,11 @@ const Profile = () => {
 
           <div className={styles.form_grid}>
             <div className={styles.input_group}>
-              <label>First Name</label>
+              <label>Full Name</label>
               <input
                 type="text"
-                name="firstName"
-                value={user.firstName}
-                onChange={handleChange}
-                disabled={!editMode}
-              />
-            </div>
-
-            <div className={styles.input_group}>
-              <label>Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={user.lastName}
+                name="fullName"
+                value={user.fullName}
                 onChange={handleChange}
                 disabled={!editMode}
               />

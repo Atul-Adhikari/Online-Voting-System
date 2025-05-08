@@ -30,12 +30,27 @@ function App() {
           token ? <UserDashboard /> :
           <SplashPage />
         } />
+        
+        <Route path="/userDashboard" element={<UserDashboard/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/logout" element={<LogoutMessage />} />
 
-        <Route path="/userDashboard/*" element={token ? <UserDashboard /> : <Login />} />
+        //<Route path="/userDashboard/*" element={token ? <UserDashboard /> : <Login />} />
+
+
+        <Route path="/" element={<SplashPage />} />
+        //<Route path="/login" element={<Login />} />
+        <Route path="/userDashboard/*" element={<UserDashboard />} />
+        <Route path="/logout" element={<LogoutMessage/>} />
+
+
+        {/* User Dashboard */}
+        //<Route path="/userDashboard/*" element={
+        //  token ? <UserDashboard /> : <Login />
+        //} />
+
 
         <Route path="/admin" element={role === "admin" ? <AdminDashboard /> : <Login />} />
         <Route path="/admin/create-vote" element={role === "admin" ? <CreateVote /> : <Login />} />

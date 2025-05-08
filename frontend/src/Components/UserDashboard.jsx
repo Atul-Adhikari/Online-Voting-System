@@ -4,11 +4,13 @@ import styles from "../Styles/UserDashboard.module.css";
 import VotingComponent from "./VotingComponent";
 import ElectionInfo from "./ElectionInfo";
 import Footer from "./Footer";
-import { FaFacebook } from "react-icons/fa";
 import Profile from "./Profile";
+import axios from "axios";
 
 const UserDashboard = () => {
-  const [loading, setLoading] = useState(false); // Track loading state
+  const [loading, setLoading] = useState(false);
+  const [elections, setElections] = useState([]);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const displayCandidates = () => {
@@ -16,14 +18,11 @@ const UserDashboard = () => {
   };
 
   const handleLogout = () => {
-    setLoading(true); // Start loading animation
-
-    // Simulate a 3-second delay before redirecting to login
+    setLoading(true);
     setTimeout(() => {
-      // After 3 seconds, stop loading and redirect to login
       setLoading(false);
-      navigate("/login"); // Redirect to login page
-    }, 3000); // 3000 ms = 3 seconds
+      navigate("/login");
+    }, 3000);
   };
 
   const userProfile = {
@@ -32,57 +31,18 @@ const UserDashboard = () => {
     profilePic: "/Personal.jpg",
   };
 
-  const upcomingElection = {
-    date: "2025-04-15",
-    name: "General Election 2025",
-    description: "Choose your next representatives.",
-  };
-
-  // Array of previous election images
-  // const previousElections = [
-  //   "/Voting1.jpg",
-  //   "/Voting2.jpg",
-  //   "/Voting3.jpg",
-  //   "/Voting4.jpg",
-  // ];
-  const previousElections = [
-    {
-      year: 2023,
-      name: "Presidential Election 2023",
-      winner: "John Doe",
-      party: "Democratic Party",
-      votes: "12,540,000",
-      turnout: 67.5,
-    },
-    {
-      year: 2021,
-      name: "Parliamentary Election 2021",
-      winner: "Jane Smith",
-      party: "Republican Party",
-      votes: "9,780,000",
-      turnout: 58.3,
-    },
-    {
-      year: 2019,
-      name: "Local Election 2019",
-      winner: "Michael Lee",
-      party: "Independent",
-      votes: "4,320,000",
-      turnout: 45.2,
-    },
-  ];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === previousElections.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000); // Change image every 3 seconds
+    const fetchElections = async () => {
+      try {
+        const response = await axios.get("http://localhost:3333/api/elections");
+        setElections(response.data);
+      } catch (err) {
+        setError("Failed to load election data.");
+      }
+    };
 
-    return () => clearInterval(interval); // Cleanup the interval on component unmount
-  }, [previousElections.length]);
+    fetchElections();
+  }, []);
 
   return (
     <div className={styles.dashboardContainer}>
@@ -117,71 +77,56 @@ const UserDashboard = () => {
         </ul>
       </nav>
 
-      {/* Main Content - Render based on Nested Routes */}
+      {/* Main Content */}
       <div className={styles.mainContent}>
         <Routes>
           <Route
             index
             element={
               <>
-                {/* Previous Elections Results */}
+                <h2>Election Overview</h2>
+                {error && <p style={{ color: "red" }}>{error}</p>}
 
-                {/* Upcoming Election */}
-                <div className={styles.upcomingElection}>
-                  <h2>Upcoming Election</h2>
-                  <div className={styles.electionCard}>
-                    <h3>{upcomingElection.name}</h3>
-                    <p>{upcomingElection.description}</p>
-                    <p>
-                      <strong>Election Date:</strong> {upcomingElection.date}
-                    </p>
-                    <button
-                      className={styles.candidatesButton}
-                      onClick={displayCandidates}
-                    >
-                      View Candidates
-                    </button>
-                  </div>
-                </div>
+                {elections.length > 0 ? (
+                  elections.map((election) => (
+                    <div key={election._id} className={styles.electionCard}>
+                      <h3>{election.title}</h3>
+                      <p>
+                        <strong>Description:</strong> {election.description}
+                      </p>
+                      <p>
+                        <strong>Address:</strong> {election.address}
+                      </p>
+                      {election.status && (
+                        <p>
+                          <strong>Status:</strong> {election.status}
+                        </p>
+                      )}
+                      {election.duration && (
+                        <p>
+                          <strong>Duration (days):</strong> {election.duration}
+                        </p>
+                      )}
+                      <p>
+                        <strong>Created At:</strong>{" "}
+                        {new Date(election.createdAt).toLocaleString()}
+                      </p>
 
-                {/* Previous Elections Image Carousel */}
-                <div className={styles.previousElections}>
-                  <h2>Past Election Results</h2>
-                  <div className={styles.electionResults}>
-                    {previousElections.length > 0 ? (
-                      previousElections.map((election, index) => (
-                        <div key={index} className={styles.electionCard}>
-                          <div className={styles.electionHeader}>
-                            <h3>{election.name}</h3>
-                            <span className={styles.electionYear}>
-                              {election.year}
-                            </span>
-                          </div>
-                          <p>
-                            <strong>Winner:</strong> {election.winner}
-                          </p>
-                          <p>
-                            <strong>Party:</strong> {election.party}
-                          </p>
-                          <div className={styles.voteStats}>
-                            <p>
-                              🗳️ <strong>Votes Received:</strong>{" "}
-                              {election.votes}
-                            </p>
-                            <p>
-                              📊 <strong>Turnout:</strong> {election.turnout}%
-                            </p>
-                          </div>
-                          <button className={styles.detailsButton}>
-                            View More
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No past election results available.</p>
-                    )}
-                  </div>
-                </div>
+                      {election.options?.length > 0 && (
+                        <>
+                          <h4>Candidates:</h4>
+                          <ul>
+                            {election.options.map((opt, idx) => (
+                              <li key={idx}>{opt}</li>
+                            ))}
+                          </ul>
+                        </>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p>No elections found.</p>
+                )}
               </>
             }
           />
