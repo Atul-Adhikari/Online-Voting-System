@@ -196,3 +196,21 @@ html, body {
   margin-top: 2rem;
   color: black;
 }
+
+.logoutButton{
+  /* background: green;
+  color: white;
+  padding: 8px;
+  border-radius: 8px;
+  border: none; */
+  font-size: 1.1rem;
+  font-weight: 500;
+  background: #2C3E50;
+  color: white;
+  border: none;
+}
+
+.logoutButton:hover{
+  cursor: pointer;
+  color: #3498db;
+}
