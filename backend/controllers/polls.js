@@ -4,36 +4,17 @@ const mongoose = require('mongoose');
 
 const createPoll = async (req, res) => {
   try {
-    const { title, description, address, duration } = req.body;
-
-    // Parse the options array from the stringified body
-    const options = JSON.parse(req.body.options);
-    const files = req.files; // populated by multer
+    const { title, description, address, duration, options } = req.body;
 
     if (!title || !description || !options || options.length < 2) {
       return res.status(400).json({ message: "Poll must have a title, description, and at least 2 options." });
     }
 
-    // Attach uploaded image URLs to the options
-    const enrichedOptions = options.map((opt, index) => ({
-      name: opt.text,
-      image: files[index] ? `/uploads/${files[index].filename}` : null, // save path
-    }));
-
-    const poll = new Poll({
-      title,
-      description,
-      address,
-      duration,
-      options: enrichedOptions,
-      status: "active"
-    });
-
+    const poll = new Poll({ title, description, address, duration, options });
     await poll.save();
 
     res.status(201).json({ message: "Poll created successfully!", poll });
   } catch (error) {
-    console.error("Poll creation error:", error);
     res.status(500).json({ message: error.message });
   }
 };
