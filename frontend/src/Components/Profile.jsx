@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import styles from "../Styles/Profile.module.css";
 
 const Profile = () => {
@@ -12,27 +11,8 @@ const Profile = () => {
     province: "",
   });
 
-  const [editMode, setEditMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const nepaliProvinces = [
-    "Koshi Province",
-    "Madhesh Province",
-    "Bagmati Province",
-    "Gandaki Province",
-    "Lumbini Province",
-    "Karnali Province",
-    "Sudurpashchim Province",
-  ];
-
-  // Helper function to format the date
-  const formatDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return date.toISOString().split("T")[0]; // This will return the date in 'YYYY-MM-DD' format
-  };
-
-  // Fetch user data when the component mounts
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
     const userName = localStorage.getItem("userName");
@@ -42,142 +22,85 @@ const Profile = () => {
     const userProvince = localStorage.getItem("address");
 
     if (userEmail && userName) {
-      setUser((prevState) => ({
-        ...prevState,
+      setUser({
         email: userEmail,
         fullName: userName,
-        phone: userPhone || "",
-        gender: userGender || "",
-        dob: formatDate(userDob) || "",
-        province: userProvince || "",
-      }));
-    } else {
-      console.log("No user found in localStorage");
-    }
-  }, []);
-
-  const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      await axios.put("https://your-backend-api.com/update-profile", user); // Replace with actual API endpoint
-      alert("Profile updated successfully!");
-      setEditMode(false);
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile.");
+        phone: userPhone || "Not provided",
+        gender: userGender || "Not provided",
+        dob: userDob
+          ? new Date(userDob).toISOString().split("T")[0]
+          : "Not provided",
+        province: userProvince || "Not provided",
+      });
     }
     setLoading(false);
-  };
+  }, []);
+
+  if (loading) {
+    return <div className={styles.profile_container}>Loading profile...</div>;
+  }
 
   return (
     <div className={styles.profile_container}>
       <div className={styles.profile_card}>
         <h2>My Profile</h2>
-        <div className={styles.form_grid}>
-          <div className={styles.input_group}>
-            <label>Username</label>
-            <input
-              type="text"
-              name="fullName"
-              value={user.fullName}
-              disabled
-            />
+        <p className={styles.info_message}>
+          Here’s the information we have saved for you. If anything looks
+          incorrect, please contact support.
+        </p>
+
+        <div className={styles.profile_grid}>
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Full Name</span>
+            <span className={styles.box_value}>{user.fullName}</span>
           </div>
 
-          <div className={styles.input_group}>
-            <label>Email</label>
-            <input
-              type="email"
-              name="email"
-              value={user.email}
-              disabled
-            />
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Email</span>
+            <span className={styles.box_value}>{user.email}</span>
           </div>
 
-          <div className={styles.input_group}>
-            <label>Phone</label>
-            <input
-              type="tel"
-              name="phone"
-              value={user.phone}
-              onChange={handleChange}
-              disabled={!editMode}
-            />
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Phone</span>
+            <span className={styles.box_value}>{user.phone}</span>
           </div>
 
-          <div className={styles.input_group}>
-            <label>Gender</label>
-            <select
-              name="gender"
-              value={user.gender}
-              onChange={handleChange}
-              disabled={!editMode}
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Gender</span>
+            <span className={styles.box_value}>{user.gender}</span>
           </div>
 
-          <div className={styles.input_group}>
-            <label>Date of Birth</label>
-            <input
-              type="date"
-              name="dob"
-              value={user.dob}
-              disabled={!editMode}
-            />
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Date of Birth</span>
+            <span className={styles.box_value}>{user.dob}</span>
           </div>
 
-          <div className={styles.input_group}>
-            <label>Province</label>
-            <select
-              name="province"
-              value={user.province}
-              onChange={handleChange}
-              disabled={!editMode}
-            >
-              <option value="">Select Province</option>
-              {nepaliProvinces.map((province, index) => (
-                <option key={index} value={province}>
-                  {province}
-                </option>
-              ))}
-            </select>
+          <div className={styles.profile_box}>
+            <span className={styles.box_label}>Province</span>
+            <span className={styles.box_value}>{user.province}</span>
           </div>
         </div>
 
-        <div className={styles.profile_actions}>
-          {editMode ? (
-            <>
-              <button
-                className={styles.save_btn}
-                onClick={handleSave}
-                disabled={loading}
-              >
-                {loading ? "Saving..." : "Save"}
-              </button>
-              <button
-                className={styles.cancel_btn}
-                onClick={() => setEditMode(false)}
-              >
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button
-              className={styles.edit_btn}
-              onClick={() => setEditMode(true)}
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
+        <p className={styles.support_message}>
+          Need changes?{" "}
+          <button
+            onClick={() =>
+              window.open("mailto:strawhatonlinevotingsystem@gmail.com")
+            }
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              color: "blue",
+              textDecoration: "underline",
+              cursor: "pointer",
+              font: "inherit",
+            }}
+          >
+            Click here to email our support team
+          </button>
+          .
+        </p>
       </div>
     </div>
   );

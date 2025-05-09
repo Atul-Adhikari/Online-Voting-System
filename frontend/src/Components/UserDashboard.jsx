@@ -12,7 +12,7 @@ const UserDashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-      navigate("/logout");
+    navigate("/logout");
   };
 
   const userProfile = {
@@ -41,6 +41,7 @@ const UserDashboard = () => {
         }
 
         const data = await response.json();
+        console.log(data)
         if (Array.isArray(data)) {
           setElections(data);
         } else {
@@ -90,7 +91,6 @@ const UserDashboard = () => {
 
       {/* Main Content */}
       <div className={styles.mainContent}>
-
         <Routes>
           <Route
             index
@@ -106,9 +106,7 @@ const UserDashboard = () => {
 
                 {/* Error Message */}
                 {error && <p className={styles.errorMessage}>{error}</p>}
-                {elections.length === 0 && (
-                  <p>No elections found.</p>
-                )}
+                {elections.length === 0 && <p>No elections found.</p>}
 
                 {/* Summary Cards */}
                 <div className={styles.summaryCards}>
@@ -125,7 +123,10 @@ const UserDashboard = () => {
                   <div className={styles.card}>
                     <h3>Completed Elections</h3>
                     <p>
-                      {elections.filter((e) => e.status === "completed").length}
+                      {
+                        elections.filter((e) => e.status === "completed")
+                          .length
+                      }
                     </p>
                   </div>
                 </div>
@@ -206,12 +207,19 @@ const UserDashboard = () => {
                           <h4 className={styles.candidateTitle}>Candidates</h4>
                           <div className={styles.candidateGrid}>
                             {election.options.map((opt, idx) => (
-                              <div key={idx} className={styles.candidateCard}>
+                              <div
+                                key={idx}
+                                className={styles.candidateCard}
+                              >
                                 {opt.image ? (
                                   <img
-                                    src={opt.image}
+                                    src={`http://localhost:3333/uploads/${opt.image}`}
                                     alt={opt.name}
                                     className={styles.candidateImage}
+                                    onError={(e) => {
+                                      e.target.onerror = null;
+                                      e.target.src = "/default-placeholder.png";
+                                    }}
                                   />
                                 ) : (
                                   <div
