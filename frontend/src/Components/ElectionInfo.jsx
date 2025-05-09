@@ -1,125 +1,113 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoPeopleSharp } from "react-icons/io5";
 import styles from "../Styles/ElectionInfo.module.css";
 
 const ElectionInfo = () => {
-  const candidates = [
-    {
-      id: 1,
-      name: "Harry Bhandari",
-      party: "Progressive Alliance",
-      age: 42,
-      background: "Former City Council Member",
-      img: "/Logo2.png",
-      platform: [
-        "Improve Education Funding",
-        "Healthcare Reform",
-        "Green Energy Investment",
-      ],
-    },
-    {
-      id: 2,
-      name: "John Pandey",
-      party: "Economic Growth Party",
-      age: 55,
-      background: "Successful Entrepreneur",
-      img: "/Logo2.png",
-      platform: [
-        "Small Business Support",
-        "Tax Reduction",
-        "Infrastructure Development",
-        
-      ],
-    },
-    {
-      id: 3,
-      name: "Fredrick Chalise",
-      party: "Community First Coalition",
-      age: 38,
-      background: "Civil Rights Lawyer",
-      img: "/Logo2.png",
-      platform: [
-        "Social Justice Reforms",
-        "Community Empowerment",
-        "Affordable Housing",
-      ],
-    },
-    {
-      id: 4,
-      name: "Aisha Patel",
-      party: "Community First Coalition",
-      age: 38,
-      background: "Civil Rights Lawyer",
-      img: "/Logo2.png",
-      platform: [
-        "Social Justice Reforms",
-        "Community Empowerment",
-        "Affordable Housing",
-      ],
-    },
-  ];
+  const [poll, setPoll] = useState(null);
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPollData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:3333/polls", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setPoll(data[0]);
+          setCandidates(data[0].options || []);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPollData();
+  }, []);
 
   return (
     <div className={styles.container}>
       <div className={styles.heading}>
-        <img src="/Logo2.png" alt="" srcset="" />
+        <img src="/Logo2.png" alt="Election Logo" />
         <h1 className={styles.title}>Election Information</h1>
       </div>
 
-      <section className={styles.section}>
-        <h2>🗳 Election Overview</h2>
-        <p>
-          Welcome to the 2025 National Elections. Participate in shaping the
-          future.
-        </p>
-      </section>
+      {loading ? (
+        <p className={styles.loading}>Loading election data...</p>
+      ) : poll ? (
+        <>
+          <section className={styles.section}>
+            <h2>🗳 {poll.title}</h2>
+            <p>{poll.description}</p>
+            <p><strong>📍 Location:</strong> {poll.address}</p>
+            <p><strong>📡 Status:</strong> {poll.status.toUpperCase()}</p>
+          </section>
 
-      <section className={styles.section}>
-        <h2>📅 Important Dates</h2>
-        <ul>
-          <li>Registration Closes: April 15, 2025</li>
-          <li>Voting Opens: April 20, 2025</li>
-          <li>Voting Closes: April 25, 2025</li>
-          <li>Results Announcement: April 30, 2025</li>
-        </ul>
-      </section>
+          <section className={styles.section}>
+            <h2>📅 Important Dates</h2>
+            <ul>
+              <li>📝 Registration Closes: April 15, 2025</li>
+              <li>🗳️ Voting Opens: April 20, 2025</li>
+              <li>🕔 Voting Closes: April 25, 2025</li>
+              <li>📢 Results Announcement: April 30, 2025</li>
+            </ul>
+          </section>
 
-      <section className={styles.section}>
-        <h2>
-          <IoPeopleSharp /> Candidates
-        </h2>
-        <div className={styles.candidateList}>
-          {candidates.map((candidate, index) => (
-            <div key={index} className={styles.candidateCard}>
-              <img
-                src={candidate.img}
-                alt={candidate.name}
-                className={styles.candidateImg}
-              />
-              <h3>{candidate.name}</h3>
-              <p>
-                <strong>Party:</strong> {candidate.party}
-              </p>
-              <p>{candidate.bio}</p>
+          <section className={styles.section}>
+            <h2><IoPeopleSharp /> Meet the Candidates</h2>
+            <div className={styles.candidateList}>
+              {candidates.length === 0 ? (
+                <p>No candidates available.</p>
+              ) : (
+                candidates.map((candidate, index) => (
+                  <div key={index} className={styles.candidateCard}>
+                    <img
+                      src={candidate.image || "/default-candidate.png"}
+                      alt={candidate.name}
+                      className={styles.candidateImg}
+                    />
+                    <h3>{candidate.name}</h3>
+                    <p><strong>Votes:</strong> {candidate.votes}</p>
+                  </div>
+                ))
+              )}
             </div>
-          ))}
-        </div>
-      </section>
+          </section>
 
-      <section className={styles.section}>
-        <h2>✅ How to Vote</h2>
-        <p>1. Register before April 15, 2025.</p>
-        <p>2. Login to your account and select your preferred candidate.</p>
-        <p>3. Submit your vote securely.</p>
-      </section>
+          <section className={styles.section}>
+            <h2>✅ How to Vote</h2>
+            <ol>
+              <li>Register before April 15, 2025.</li>
+              <li>Login and select your preferred candidate.</li>
+              <li>Submit your vote securely and confirm submission.</li>
+            </ol>
+          </section>
 
-      <section className={styles.section}>
-        <h2>🔒 Security Measures</h2>
-        <p>
-          Your vote is secured with end-to-end encryption and multi-factor
-          authentication.
-        </p>
-      </section>
+          <section className={styles.section}>
+            <h2>🔒 Security Measures</h2>
+            <p>
+              All votes are encrypted and verified using multi-factor authentication.
+              We ensure confidentiality and integrity in every vote cast.
+            </p>
+          </section>
+        </>
+      ) : (
+        <p className={styles.loading}>No election data available.</p>
+      )}
     </div>
   );
 };
