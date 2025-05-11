@@ -85,7 +85,10 @@ const Profile = () => {
           Need changes?{" "}
           <button
             onClick={() =>
-              window.open("mailto:strawhatonlinevotingsystem@gmail.com")
+              window.open(
+                "https://mail.google.com/mail/?view=cm&fs=1&to=strawhatonlinevotingsystem@gmail.com",
+                "_blank"
+              )
             }
             style={{
               background: "none",

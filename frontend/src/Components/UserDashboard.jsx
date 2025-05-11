@@ -12,7 +12,13 @@ const UserDashboard = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
-  const carouselImages = ["/Voting1.jpg", "/Voting2.jpg", "/Voting3.jpg", "/Voting4.jpg"];
+
+  const carouselImages = [
+    "/Voting1.jpg",
+    "/Voting2.jpg",
+    "/Voting3.jpg",
+    "/Voting4.jpg",
+  ];
 
   const handleLogout = () => {
     navigate("/logout");
@@ -104,76 +110,39 @@ const UserDashboard = () => {
             index
             element={
               <>
-                <h2 className={styles.dashboardTitle}>
-                  Welcome, {userProfile.name}!
-                </h2>
-                <p className={styles.dashboardSubheading}>
-                  Today is {new Date().toLocaleDateString()}
-                </p>
+                <h2 className={styles.dashboardTitle}>Welcome, {userProfile.name}!</h2>
+                <p className={styles.dashboardSubheading}>Today is {new Date().toLocaleDateString()}</p>
 
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {elections.length === 0 && <p>No elections found.</p>}
 
                 <div className={styles.summaryCards}>
-                  <div className={styles.card}>
-                    <h3>Total Elections</h3>
-                    <p>{elections.length}</p>
-                  </div>
-                  <div className={styles.card}>
-                    <h3>Active Elections</h3>
-                    <p>
-                      {elections.filter((e) => e.status === "active").length}
-                    </p>
-                  </div>
-                  <div className={styles.card}>
-                    <h3>Completed Elections</h3>
-                    <p>
-                      {elections.filter((e) => e.status === "completed").length}
-                    </p>
-                  </div>
+                  <div className={styles.card}><h3>Total Elections</h3><p>{elections.length}</p></div>
+                  <div className={styles.card}><h3>Active Elections</h3><p>{elections.filter((e) => e.status === "active").length}</p></div>
+                  <div className={styles.card}><h3>Completed Elections</h3><p>{elections.filter((e) => e.status === "completed").length}</p></div>
                 </div>
 
                 <div className={styles.carouselContainer}>
-                  <img
-                    src={carouselImages[currentIndex]}
-                    alt={`Slide ${currentIndex + 1}`}
-                    className={styles.carouselImage}
-                  />
+                  <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`} className={styles.carouselImage} />
                 </div>
 
                 <div className={styles.recentActivity}>
                   <h3>Election Rules</h3>
                   <ul>
                     <li>📝 You must be registered to vote in the election.</li>
-                    <li>
-                      🗳️ Each voter is allowed to vote only once in each
-                      election.
-                    </li>
-                    <li>
-                      🔒 Your vote is confidential and cannot be changed once
-                      submitted.
-                    </li>
-                    <li>
-                      🚫 Voting for multiple candidates in the same position
-                      will result in disqualification.
-                    </li>
+                    <li>🗳️ Each voter is allowed to vote only once in each election.</li>
+                    <li>🔒 Your vote is confidential and cannot be changed once submitted.</li>
+                    <li>🚫 Voting for multiple candidates in the same position will result in disqualification.</li>
                   </ul>
                 </div>
 
                 <div className={styles.upcoming}>
                   <h3>Upcoming Elections</h3>
-                  {elections
-                    .filter(
-                      (e) =>
-                        new Date(e.createdAt) >
-                        new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-                    )
-                    .map((e) => (
-                      <div key={e._id} className={styles.upcomingItem}>
-                        <strong>{e.title}</strong> — Starts:{" "}
-                        {new Date(e.createdAt).toLocaleDateString()}
-                      </div>
-                    ))}
+                  {elections.filter((e) => new Date(e.createdAt) > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)).map((e) => (
+                    <div key={e._id} className={styles.upcomingItem}>
+                      <strong>{e.title}</strong> — Starts: {new Date(e.createdAt).toLocaleDateString()}
+                    </div>
+                  ))}
                 </div>
 
                 <div className={styles.electionGrid}>
@@ -181,32 +150,13 @@ const UserDashboard = () => {
                     <div key={election._id} className={styles.electionCard}>
                       <div className={styles.electionHeader}>
                         <h3>{election.title}</h3>
-                        <span
-                          className={`${styles.electionStatus} ${
-                            election.status === "active"
-                              ? styles.statusActive
-                              : styles.statusInactive
-                          }`}
-                        >
-                          {election.status || "Unknown"}
-                        </span>
+                        <span className={`${styles.electionStatus} ${election.status === "active" ? styles.statusActive : styles.statusInactive}`}>{election.status || "Unknown"}</span>
                       </div>
-                      <p className={styles.electionDescription}>
-                        {election.description}
-                      </p>
+                      <p className={styles.electionDescription}>{election.description}</p>
                       <div className={styles.electionMeta}>
-                        <p>
-                          <strong>Address:</strong> {election.address}
-                        </p>
-                        {election.duration && (
-                          <p>
-                            <strong>Duration:</strong> {election.duration} days
-                          </p>
-                        )}
-                        <p>
-                          <strong>Created At:</strong>{" "}
-                          {new Date(election.createdAt).toLocaleString()}
-                        </p>
+                        <p><strong>Address:</strong> {election.address}</p>
+                        {election.duration && <p><strong>Duration:</strong> {election.duration} days</p>}
+                        <p><strong>Created At:</strong> {new Date(election.createdAt).toLocaleString()}</p>
                       </div>
 
                       {election.options?.length > 0 && (
@@ -226,17 +176,10 @@ const UserDashboard = () => {
                                     }}
                                   />
                                 ) : (
-                                  <div
-                                    className={styles.candidateImage}
-                                    style={{ background: "#ccc" }}
-                                  />
+                                  <div className={styles.candidateImage} style={{ background: "#ccc" }} />
                                 )}
                                 <div>{opt.name}</div>
-                                {opt.party && (
-                                  <div className={styles.candidateParty}>
-                                    {opt.party}
-                                  </div>
-                                )}
+                                {opt.party && <div className={styles.candidateParty}>{opt.party}</div>}
                               </div>
                             ))}
                           </div>
