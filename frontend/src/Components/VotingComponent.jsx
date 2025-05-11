@@ -26,17 +26,23 @@ const VotingComponent = () => {
       });
 
       const data = await response.json();
-
       console.log("Fetched polls:", data);
-      data.forEach((poll) => {
-        console.log(`Poll ID: ${poll._id}, Status: ${poll.status}`);
-      });
 
-      // Filter only active polls (case-insensitive)
+      // Filter only active polls
       const active = data.filter(
         (poll) => poll.status && poll.status.toLowerCase() === "active"
       );
       setActivePolls(active);
+
+      // Check if the user has already voted for any poll
+      const votedPolls = {};
+      active.forEach((poll) => {
+        if (poll.options.some((option) => option.voters.includes(token))) {
+          votedPolls[poll._id] = true; // Mark as voted
+        }
+      });
+      setHasVoted(votedPolls);
+
       setLoading(false);
     } catch (err) {
       console.error("Error fetching polls:", err);
@@ -63,7 +69,6 @@ const VotingComponent = () => {
       setError(null);
       setLoading(true);
 
-      // 🔗 Replace with your real backend POST vote endpoint
       const token = localStorage.getItem("token");
       const response = await fetch("http://localhost:3333/polls/vote", {
         method: "POST",
@@ -75,9 +80,13 @@ const VotingComponent = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Vote submission failed.");
+        const errorData = await response.json();
+        setError(errorData.message || "Vote submission failed.");
+        setLoading(false);
+        return;
       }
 
+      // After successful vote, mark this poll as voted
       setHasVoted((prev) => ({
         ...prev,
         [pollId]: true,

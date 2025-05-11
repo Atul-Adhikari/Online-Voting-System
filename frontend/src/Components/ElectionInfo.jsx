@@ -26,8 +26,9 @@ const ElectionInfo = () => {
 
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          setPoll(data[0]);
-          setCandidates(data[0].options || []);
+          const latestPoll = data[0];
+          setPoll(latestPoll);
+          setCandidates(latestPoll.options || []);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -41,47 +42,52 @@ const ElectionInfo = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.heading}>
+      <div className={styles.header}>
         <img src="/Logo2.png" alt="Election Logo" />
-        <h1 className={styles.title}>Election Information</h1>
+        <h1>Election Overview</h1>
       </div>
 
       {loading ? (
-        <p className={styles.loading}>Loading election data...</p>
+        <p className={styles.loading}>Fetching election data...</p>
       ) : poll ? (
         <>
           <section className={styles.section}>
-            <h2>🗳 {poll.title}</h2>
+            <h2>{poll.title}</h2>
             <p>{poll.description}</p>
-            <p><strong>📍 Location:</strong> {poll.address}</p>
-            <p><strong>📡 Status:</strong> {poll.status.toUpperCase()}</p>
+            <div className={styles.meta}>
+              <span>📍 {poll.address}</span>
+              <span className={`${styles.status} ${poll.status === "active" ? styles.active : styles.inactive}`}>
+                {poll.status.toUpperCase()}
+              </span>
+            </div>
           </section>
 
           <section className={styles.section}>
             <h2>📅 Important Dates</h2>
-            <ul>
-              <li>📝 Registration Closes: April 15, 2025</li>
-              <li>🗳️ Voting Opens: April 20, 2025</li>
-              <li>🕔 Voting Closes: April 25, 2025</li>
-              <li>📢 Results Announcement: April 30, 2025</li>
+            <ul className={styles.dates}>
+              <li><strong>📝 Registration Closes:</strong> April 15, 2025</li>
+              <li><strong>🗳️ Voting Opens:</strong> April 20, 2025</li>
+              <li><strong>🕔 Voting Closes:</strong> April 25, 2025</li>
+              <li><strong>📢 Results Announcement:</strong> April 30, 2025</li>
             </ul>
           </section>
 
           <section className={styles.section}>
             <h2><IoPeopleSharp /> Meet the Candidates</h2>
-            <div className={styles.candidateList}>
+            <div className={styles.candidatesGrid}>
               {candidates.length === 0 ? (
-                <p>No candidates available.</p>
+                <p>No candidates registered.</p>
               ) : (
                 candidates.map((candidate, index) => (
-                  <div key={index} className={styles.candidateCard}>
+                  <div key={index} className={styles.card}>
                     <img
                       src={candidate.image || "/default-candidate.png"}
                       alt={candidate.name}
-                      className={styles.candidateImg}
+                      className={styles.avatar}
                     />
                     <h3>{candidate.name}</h3>
                     <p><strong>Votes:</strong> {candidate.votes}</p>
+                    {candidate.party && <p className={styles.party}>({candidate.party})</p>}
                   </div>
                 ))
               )}
@@ -90,18 +96,17 @@ const ElectionInfo = () => {
 
           <section className={styles.section}>
             <h2>✅ How to Vote</h2>
-            <ol>
-              <li>Register before April 15, 2025.</li>
-              <li>Login and select your preferred candidate.</li>
-              <li>Submit your vote securely and confirm submission.</li>
+            <ol className={styles.instructions}>
+              <li>Register before April 15, 2025 using your verified ID.</li>
+              <li>Login to the system and select your preferred candidate.</li>
+              <li>Click 'Vote' and confirm your choice.</li>
             </ol>
           </section>
 
           <section className={styles.section}>
             <h2>🔒 Security Measures</h2>
             <p>
-              All votes are encrypted and verified using multi-factor authentication.
-              We ensure confidentiality and integrity in every vote cast.
+              We ensure top-tier security using end-to-end encryption, multi-factor authentication, and blockchain verification to protect vote integrity and voter anonymity.
             </p>
           </section>
         </>

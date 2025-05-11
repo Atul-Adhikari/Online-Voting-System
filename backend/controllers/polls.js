@@ -65,33 +65,51 @@ const votePoll = async (req, res) => {
   try {
     const { pollId, optionId } = req.body;
 
+    // Ensure Poll exists
     const poll = await Poll.findById(pollId);
-    const user = await User.findById(req.user_id);
-    if (!poll) return res.status(404).json({ message: "Poll not found" });
+    if (!poll) {
+      return res.status(404).json({ message: "Poll not found" });
+    }
 
+    // Ensure User exists
+    const user = await User.findById(req.user_id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Ensure the user has not already voted
     const alreadyVoted = poll.options.some(option => option.voters.includes(req.user_id));
     if (alreadyVoted) {
       return res.status(400).json({ message: "You have already voted on this poll!" });
     }
-    
-    userAddress = user.address
-    pollAddress = poll.address
-    if (userAddress.toLowerCase() !== pollAddress.toLowerCase()) {
+
+    // Check if user's address matches the poll's address
+    const userAddress = user.address.trim().toLowerCase();
+    const pollAddress = poll.address.trim().toLowerCase();
+    if (userAddress !== pollAddress) {
       return res.status(403).json({ message: "You are not allowed to vote on the election of this address." });
     }
 
-    const selectedOption = poll.options.id(optionId);
-    if (!selectedOption) return res.status(404).json({ message: "Option not found" });
+    // Find the selected option
+    const selectedOption = poll.options.find(option => option._id.toString() === optionId);
+    if (!selectedOption) {
+      return res.status(404).json({ message: "Option not found" });
+    }
 
+    // Increment vote and add user to voters list
     selectedOption.votes += 1;
     selectedOption.voters.push(req.user_id);
 
+    // Save the poll with the updated option
     await poll.save();
+
     res.json({ message: "Vote recorded successfully!", poll });
   } catch (error) {
+    console.error("Error in votePoll:", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 const getPollID = async (req, res) => {
   try {
