@@ -1,190 +1,127 @@
-/* Existing styles remain the same, with additions below */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
 
-.headerContent {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-  }
-  
-  .electionLogo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-  }
-  
-  .headerText {
-    text-align: center;
-  }
-  
-  /* Rest of the CSS remains unchanged from previous version */
-  .votingContainer {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #f9fafb;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  }
-  
-  .header {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #2c3e50;
-  }
-  
-  .header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .header p {
-    color: #718096;
-    font-size: 1.1rem;
-  }
-  
-  .candidateGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-  
-  .candidateCard {
-    background-color: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .candidateCard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .selected {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-  }
-  
-  .disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  .candidateHeader {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    background-color: #f3f4f6;
-  }
-  
-  .candidateImage {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-right: 1rem;
-    object-fit: cover;
-  }
-  
-  .candidateInfo h2 {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem;
-  }
-  
-  .candidateInfo p {
-    color: #718096;
-    font-size: 0.9rem;
-  }
-  
-  .candidateDetails {
-    padding: 1rem;
-  }
-  
-  .detailSection {
-    margin-bottom: 0.5rem;
-    display: flex;
-  }
-  
-  .detailSection span {
-    font-weight: bold;
-    margin-right: 0.5rem;
-    color: #4a5568;
-  }
-  
-  .platformSection {
-    margin-top: 1rem;
-    border-top: 1px solid #e2e8f0;
-    padding-top: 1rem;
-  }
-  
-  .platformSection h3 {
-    margin-bottom: 0.5rem;
-    color: #2d3748;
-  }
-  
-  .platformSection ul {
-    list-style-type: disc;
-    padding-left: 1.5rem;
-    color: #4a5568;
-  }
-  
-  .votingActions {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .voteButton {
-    padding: 0.75rem 2rem;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-bottom: 8px;
-  }
-  
-  .voteButton:hover:not(:disabled) {
-    background-color: #2563eb;
-  }
-  
-  .disabledButton {
-    background-color: #9ca3af;
-    cursor: not-allowed;
-  }
-  
-  .errorMessage {
-    background-color: #fee2e2;
-    color: #b91c1c;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .successMessage {
-    background-color: #d1fae5;
-    color: #047857;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-    .candidateGrid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .candidateGrid {
-      grid-template-columns: 1fr;
-    }
-  }
-  
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: #555;
+}
+
+.error {
+  color: #fff;
+  background-color: #e74c3c;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.success {
+  color: #fff;
+  background-color: #2ecc71;
+  padding: 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.electionCard {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.electionCard:hover {
+  transform: translateY(-4px);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidateCard {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  background-color: #fff;
+  transition: background-color 0.2s ease;
+}
+
+.candidateCard:hover {
+  background-color: #f0f8ff;
+}
+
+.radioButton {
+  margin-right: 1rem;
+  transform: scale(1.2);
+}
+
+.candidateInfo {
+  flex: 1;
+}
+
+.candidateInfo h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: black;
+}
+
+.party {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.platform {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.submitButton {
+  padding: 0.75rem 1.5rem;
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: #2980b9;
+}
+
+.votedMessage {
+  background-color: #dff0d8;
+  color: #3c763d;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
