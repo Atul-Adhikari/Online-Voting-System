@@ -9,7 +9,10 @@ import Profile from "./Profile";
 const UserDashboard = () => {
   const [elections, setElections] = useState([]);
   const [error, setError] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
+
+  const carouselImages = ["/Voting1.jpg", "/Voting2.jpg", "/Voting3.jpg", "/Voting4.jpg"];
 
   const handleLogout = () => {
     navigate("/logout");
@@ -41,7 +44,6 @@ const UserDashboard = () => {
         }
 
         const data = await response.json();
-        console.log(data)
         if (Array.isArray(data)) {
           setElections(data);
         } else {
@@ -56,9 +58,16 @@ const UserDashboard = () => {
     fetchElections();
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [carouselImages.length]);
+
   return (
     <div className={styles.dashboardContainer}>
-      {/* Sidebar */}
       <nav className={styles.sidebar}>
         <div className={styles.profileSection}>
           <img
@@ -89,14 +98,12 @@ const UserDashboard = () => {
         </ul>
       </nav>
 
-      {/* Main Content */}
       <div className={styles.mainContent}>
         <Routes>
           <Route
             index
             element={
               <>
-                {/* Welcome Header */}
                 <h2 className={styles.dashboardTitle}>
                   Welcome, {userProfile.name}!
                 </h2>
@@ -104,11 +111,9 @@ const UserDashboard = () => {
                   Today is {new Date().toLocaleDateString()}
                 </p>
 
-                {/* Error Message */}
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {elections.length === 0 && <p>No elections found.</p>}
 
-                {/* Summary Cards */}
                 <div className={styles.summaryCards}>
                   <div className={styles.card}>
                     <h3>Total Elections</h3>
@@ -123,15 +128,19 @@ const UserDashboard = () => {
                   <div className={styles.card}>
                     <h3>Completed Elections</h3>
                     <p>
-                      {
-                        elections.filter((e) => e.status === "completed")
-                          .length
-                      }
+                      {elections.filter((e) => e.status === "completed").length}
                     </p>
                   </div>
                 </div>
 
-                {/* Recent Activity */}
+                <div className={styles.carouselContainer}>
+                  <img
+                    src={carouselImages[currentIndex]}
+                    alt={`Slide ${currentIndex + 1}`}
+                    className={styles.carouselImage}
+                  />
+                </div>
+
                 <div className={styles.recentActivity}>
                   <h3>Election Rules</h3>
                   <ul>
@@ -151,7 +160,6 @@ const UserDashboard = () => {
                   </ul>
                 </div>
 
-                {/* Upcoming Elections */}
                 <div className={styles.upcoming}>
                   <h3>Upcoming Elections</h3>
                   {elections
@@ -168,7 +176,6 @@ const UserDashboard = () => {
                     ))}
                 </div>
 
-                {/* Election Grid */}
                 <div className={styles.electionGrid}>
                   {elections.map((election) => (
                     <div key={election._id} className={styles.electionCard}>
@@ -207,10 +214,7 @@ const UserDashboard = () => {
                           <h4 className={styles.candidateTitle}>Candidates</h4>
                           <div className={styles.candidateGrid}>
                             {election.options.map((opt, idx) => (
-                              <div
-                                key={idx}
-                                className={styles.candidateCard}
-                              >
+                              <div key={idx} className={styles.candidateCard}>
                                 {opt.image ? (
                                   <img
                                     src={`http://localhost:3333/uploads/${opt.image}`}
