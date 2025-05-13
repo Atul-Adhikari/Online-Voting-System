@@ -142,9 +142,9 @@ const VotingComponent = () => {
                     />
                     <div className={styles.candidateInfo}>
                       <h3>{candidate.name}</h3>
-                      {candidate.image && (
+                      {candidate.imageUrl && (
                         <img
-                          src={candidate.image}
+                          src={candidate.imageUrl}
                           alt={candidate.name}
                           className={styles.candidateImage}
                         />
