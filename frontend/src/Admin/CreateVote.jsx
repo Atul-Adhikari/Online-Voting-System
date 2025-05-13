@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CreateVote.css";
 
 const CreateVote = () => {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "",
     description: "",
-    options: [{ text: "", file: null }, { text: "", file: null }],
+    options: [{ text: "", imageUrl: "" }, { text: "", imageUrl: "" }],
     duration: "",
     address: "",
   });
@@ -34,6 +37,12 @@ const CreateVote = () => {
     }
   };
 
+  const handleImageUrlChange = (e, index) => {
+    const updatedOptions = [...form.options];
+    updatedOptions[index].imageUrl = e.target.value;
+    setForm({ ...form, options: updatedOptions });
+  };
+
   const addOption = () => {
     if (
       form.options.length < 10 &&
@@ -41,27 +50,16 @@ const CreateVote = () => {
     ) {
       setForm({
         ...form,
-        options: [...form.options, { text: "", file: null }],
+        options: [...form.options, { text: "", imageUrl: "" }],
       });
     } else {
-      setError(
-        "Option cannot be empty. Please fill the previous option before adding a new one."
-      );
+      setError("Option cannot be empty. Please fill the previous option before adding a new one.");
     }
   };
 
   const removeOption = (index) => {
     const updatedOptions = form.options.filter((_, i) => i !== index);
     setForm({ ...form, options: updatedOptions });
-  };
-
-  const handleImageChange = (e, index) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const updatedOptions = [...form.options];
-      updatedOptions[index].file = file;
-      setForm({ ...form, options: updatedOptions });
-    }
   };
 
   const validateForm = () => {
@@ -92,45 +90,35 @@ const CreateVote = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("title", form.title.trim());
-      formData.append("description", form.description.trim());
-      formData.append("duration", Number(form.duration));
-      formData.append("address", form.address.trim());
-
       const optionsForServer = form.options.map((opt) => ({
-        text: opt.text.trim(),
+        name: opt.text.trim(),
+        imageUrl: opt.imageUrl.trim(),
       }));
-
-      formData.append("options", JSON.stringify(optionsForServer));
-
-      form.options.forEach((opt) => {
-        if (opt.file) {
-          formData.append("images", opt.file);
-        }
-      });
 
       const response = await fetch("http://localhost:3333/polls", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: formData,
+        body: JSON.stringify({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          duration: Number(form.duration),
+          address: form.address.trim(),
+          options: optionsForServer,
+        }),
       });
 
       if (!response.ok) throw new Error("Poll creation failed.");
 
-      const data = await response.json();
       setSuccess("Poll created successfully!");
-        setTimeout(() => {
-      setSuccess("");
-      }, 5000); // 5 seconds
-
+      setTimeout(() => setSuccess(""), 5000);
 
       setForm({
         title: "",
         description: "",
-        options: [{ text: "", file: null }, { text: "", file: null }],
+        options: [{ text: "", imageUrl: "" }, { text: "", imageUrl: "" }],
         duration: "",
         address: "",
       });
@@ -143,6 +131,11 @@ const CreateVote = () => {
 
   return (
     <div className="create-vote-container">
+      {/* Back Button */}
+      <button className="back-button" onClick={() => navigate("/admin")}>
+        ← Back to Dashboard
+      </button>
+
       <h2 className="create-vote-heading">Create New Poll</h2>
 
       {error && <p className="message-error">{error}</p>}
@@ -175,9 +168,7 @@ const CreateVote = () => {
         >
           <option value="">Select Province</option>
           {nepaliProvinces.map((prov, idx) => (
-            <option key={idx} value={prov}>
-              {prov}
-            </option>
+            <option key={idx} value={prov}>{prov}</option>
           ))}
         </select>
 
@@ -191,22 +182,20 @@ const CreateVote = () => {
               className="input-field"
               required
             />
-
             <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleImageChange(e, idx)}
-              className="file-input"
+              type="text"
+              placeholder="Image URL"
+              value={option.imageUrl}
+              onChange={(e) => handleImageUrlChange(e, idx)}
+              className="input-field"
             />
-
-            {option.file && (
+            {option.imageUrl && (
               <img
-                src={URL.createObjectURL(option.file)}
+                src={option.imageUrl}
                 alt={`Preview ${idx + 1}`}
                 className="option-image"
               />
             )}
-
             {form.options.length > 2 && (
               <button
                 type="button"
