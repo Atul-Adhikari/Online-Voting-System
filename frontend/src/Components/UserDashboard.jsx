@@ -109,41 +109,22 @@ const UserDashboard = () => {
             index
             element={
               <>
-                <h2 className={styles.dashboardTitle}>
-                  Welcome, {userProfile.name}!
-                </h2>
-                <p className={styles.dashboardSubheading}>
-                  Today is {new Date().toLocaleDateString()}
-                </p>
+                <h2 className={styles.dashboardTitle}>Welcome, {userProfile.name}!</h2>
+                <p className={styles.dashboardSubheading}>Today is {new Date().toLocaleDateString()}</p>
 
                 {error && <p className={styles.errorMessage}>{error}</p>}
                 {elections.length === 0 && <p>No elections found.</p>}
 
                 <div className={styles.summaryCards}>
-                  <div className={styles.card}>
-                    <h3>Total Elections</h3>
-                    <p>{elections.length}</p>
-                  </div>
-                  <div className={styles.card}>
-                    <h3>Active Elections</h3>
-                    <p>
-                      {elections.filter((e) => e.status === "active").length}
-                    </p>
-                  </div>
-                  <div className={styles.card}>
-                    <h3>Completed Elections</h3>
-                    <p>
-                      {elections.filter((e) => e.status === "inactive").length}
-                    </p>
-                  </div>
+                  
+                  <div className={styles.card}><h3>Total Elections</h3><p>{elections.length}</p></div>
+                  <div className={styles.card}><h3>Active Elections</h3><p>{elections.filter((e) => e.status === "active").length}</p></div>
+                  <div className={styles.card}><h3>Completed Elections</h3><p>{elections.filter((e) => e.status === "completed").length}</p></div>
+
                 </div>
 
                 <div className={styles.carouselContainer}>
-                  <img
-                    src={carouselImages[currentIndex]}
-                    alt={`Slide ${currentIndex + 1}`}
-                    className={styles.carouselImage}
-                  />
+                  <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`} className={styles.carouselImage} />
                 </div>
 
                 <div className={styles.recentActivity}>
@@ -174,6 +155,7 @@ const UserDashboard = () => {
                         {new Date(e.createdAt).toLocaleDateString()}
                       </div>
                     ))}
+
                 </div>
                 {/* Add this before the full elections grid */}
                 <h3 className={styles.overview}>All Elections Overview</h3>
@@ -182,32 +164,13 @@ const UserDashboard = () => {
                     <div key={election._id} className={styles.electionCard}>
                       <div className={styles.electionHeader}>
                         <h3>{election.title}</h3>
-                        <span
-                          className={`${styles.electionStatus} ${
-                            election.status === "active"
-                              ? styles.statusActive
-                              : styles.statusInactive
-                          }`}
-                        >
-                          {election.status || "Unknown"}
-                        </span>
+                        <span className={`${styles.electionStatus} ${election.status === "active" ? styles.statusActive : styles.statusInactive}`}>{election.status || "Unknown"}</span>
                       </div>
-                      <p className={styles.electionDescription}>
-                        {election.description}
-                      </p>
+                      <p className={styles.electionDescription}>{election.description}</p>
                       <div className={styles.electionMeta}>
-                        <p>
-                          <strong>Address:</strong> {election.address}
-                        </p>
-                        {election.duration && (
-                          <p>
-                            <strong>Duration:</strong> {election.duration} days
-                          </p>
-                        )}
-                        <p>
-                          <strong>Created At:</strong>{" "}
-                          {new Date(election.createdAt).toLocaleString()}
-                        </p>
+                        <p><strong>Address:</strong> {election.address}</p>
+                        {election.duration && <p><strong>Duration:</strong> {election.duration} days</p>}
+                        <p><strong>Created At:</strong> {new Date(election.createdAt).toLocaleString()}</p>
                       </div>
 
                       {election.options?.length > 0 && (
@@ -227,10 +190,7 @@ const UserDashboard = () => {
                                     }}
                                   />
                                 ) : (
-                                  <div
-                                    className={styles.candidateImage}
-                                    style={{ background: "#ccc" }}
-                                  />
+                                  <div className={styles.candidateImage} style={{ background: "#ccc" }} />
                                 )}
                                 <div>{opt.name}</div>
                                 {opt.party && (
@@ -244,6 +204,7 @@ const UserDashboard = () => {
                                       Votes: {opt.votes}
                                     </div>
                                   )}
+
                               </div>
                             ))}
                           </div>

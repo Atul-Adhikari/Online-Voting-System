@@ -335,6 +335,30 @@ p a:hover {
   margin-top: -10px;
   margin-bottom: 10px;
 }
+.password-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle {
+  position: absolute;
+  bottom: 20px;
+  right: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.password-toggle i {
+  font-size: 1.2em;
+  color: #333;
+}
+
+.password-toggle:hover i {
+  color: #555;
+}
+
 
 
 /* Animations */

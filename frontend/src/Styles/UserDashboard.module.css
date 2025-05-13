@@ -201,12 +201,11 @@ body {
 
 .electionStatus {
   padding: 0.3rem 0.8rem;
-  border-radius: 8px;
+  border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 500;
   text-align: center;
   height: 30px;
-}
 
 .statusActive {
   background-color: #27ae60;

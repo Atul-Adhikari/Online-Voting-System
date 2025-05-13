@@ -6,12 +6,13 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.clear(); // Clear token and user info
-    navigate("/login");   // Redirect to login page
+    localStorage.clear();
+    navigate("/login");
   };
 
   return (
-    <div className="admin-dashboard">
+    <>
+      {/* Only Admin Dashboard shows this */}
       <div className="admin-header">
         <h1 className="admin-logo">E-मत</h1>
         <h2 className="admin-title">Admin Panel</h2>
@@ -53,8 +54,19 @@ const AdminDashboard = () => {
             <i className="fas fa-chart-bar"></i> Go to Vote Lists
           </button>
         </div>
+
+        {/* Analytics */}
+        <div className="admin-card" onClick={() => navigate("/admin/analytics")}>
+          <h2 className="admin-card-title teal">
+            <i className="fas fa-chart-line"></i> Analytics
+          </h2>
+          <p className="admin-card-text">View real-time vote charts and trends.</p>
+          <button className="admin-button teal-btn">
+            <i className="fas fa-poll"></i> Go to Analytics
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./UsersList.css";
-import defaultUserImage from "../assets/Shashank.jpg";
 
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [filteredRole, setFilteredRole] = useState("All");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -90,6 +91,10 @@ const UsersList = () => {
 
   return (
     <div className="users-container">
+      <button className="back-button" onClick={() => navigate("/admin")}>
+        ← Back to Dashboard
+      </button>
+
       <h2 className="users-heading">Registered Users</h2>
 
       <div className="filter-bar">
@@ -106,7 +111,6 @@ const UsersList = () => {
           <thead>
             <tr>
               <th>#</th>
-              <th>Photo</th>
               <th>Full Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -123,13 +127,6 @@ const UsersList = () => {
             {filteredUsers.map((user, index) => (
               <tr key={user._id}>
                 <td>{index + 1}</td>
-                <td>
-                  <img
-                    src={user.profileImage || defaultUserImage}
-                    alt="user"
-                    className="user-photo"
-                  />
-                </td>
                 <td>{user.fullName}</td>
                 <td className="email">{user.email}</td>
                 <td>{user.phone}</td>
@@ -141,11 +138,7 @@ const UsersList = () => {
                 <td>{user.address}</td>
                 <td>{user.nationalID}</td>
                 <td>
-                  <span
-                    className={
-                      user.status ? "status-active" : "status-inactive"
-                    }
-                  >
+                  <span className={user.status ? "status-active" : "status-inactive"}>
                     {user.status ? "Verified" : "Pending"}
                   </span>
                   {!user.status && (
