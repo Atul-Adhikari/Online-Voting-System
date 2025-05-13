@@ -7,6 +7,7 @@ import logoImage from '../../assets/Logo2.png';
 const Signup = () => {
   const [fullName, setFullName] = useState({ firstName: '', lastName: '' });
   const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState('');
   const [gender, setGender] = useState('');
   const [dob, setDob] = useState('');
@@ -27,47 +28,50 @@ const Signup = () => {
     "Karnali Province",
     "Sudurpashchim Province"
   ];
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!termsAccepted) {
       alert('Please accept the terms and conditions.');
       return;
     }
-
+  
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(phone)) {
       setError('Phone number must be exactly 10 digits.');
       return;
     }
-
+  
     // National ID format: XX-XX-XX-XXXXX
     const nationalIdRegex = /^\d{2}-\d{2}-\d{2}-\d{5}$/;
     if (!nationalIdRegex.test(nationalID)) {
       setError('National ID must be in the format XX-XX-XX-XXXXX.');
       return;
     }
-
+  
     // Age validation: Must be at least 18 years old
     const today = new Date();
     const birthDate = new Date(dob);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
     const dayDiff = today.getDate() - birthDate.getDate();
-
+  
     if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
       age--;
     }
-
+  
     if (age < 18) {
       setError('You must be at least 18 years old to sign up.');
       return;
     }
-
+  
     setLoading(true);
     setError('');
-
+  
     const formattedUserData = {
       fullName: `${fullName.firstName} ${fullName.lastName}`,
       email,
@@ -78,16 +82,15 @@ const Signup = () => {
       address: province,
       nationalID
     };
-
+  
     try {
       const response = await axios.post('http://localhost:3333/users/register', formattedUserData);
-
+  
       console.log('Signup successful:\n', JSON.stringify(response.data, null, 2));
-
+  
       if (response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
-        alert('Registration successful!');
-        navigate('/userDashboard');
+        alert('Registration successful! Please log in.');
+        navigate('/login'); // Redirect to login page after successful signup
       } else if (response.data.error) {
         setError(response.data.error);
       } else {
@@ -100,6 +103,7 @@ const Signup = () => {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="auth-container">
@@ -166,15 +170,23 @@ const Signup = () => {
               />
             </div>
 
-            <div className="input-group">
+             <div className="input-group password-group">
               <i className="fas fa-lock"></i>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={togglePasswordVisibility}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+              </button>
             </div>
 
             <div className="input-group">
@@ -218,6 +230,7 @@ const Signup = () => {
                 required
               />
             </div>
+            
 
             <div className="checkbox-container">
               <input
@@ -231,6 +244,7 @@ const Signup = () => {
             <button type="submit" disabled={loading}>
               {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
+            
           </form>
           <p>Already have an account? <a href="/login">Sign In</a></p>
         </div>
