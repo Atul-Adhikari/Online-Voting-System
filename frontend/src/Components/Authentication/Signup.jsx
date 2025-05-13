@@ -42,6 +42,29 @@ const Signup = () => {
       return;
     }
 
+    // National ID format: XX-XX-XX-XXXXX
+    const nationalIdRegex = /^\d{2}-\d{2}-\d{2}-\d{5}$/;
+    if (!nationalIdRegex.test(nationalID)) {
+      setError('National ID must be in the format XX-XX-XX-XXXXX.');
+      return;
+    }
+
+    // Age validation: Must be at least 18 years old
+    const today = new Date();
+    const birthDate = new Date(dob);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    const dayDiff = today.getDate() - birthDate.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    if (age < 18) {
+      setError('You must be at least 18 years old to sign up.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -189,7 +212,7 @@ const Signup = () => {
               <i className="fas fa-id-card"></i>
               <input
                 type="text"
-                placeholder="National ID"
+                placeholder="National ID (XX-XX-XX-XXXXX)"
                 value={nationalID}
                 onChange={(e) => setNationalID(e.target.value)}
                 required
@@ -209,9 +232,7 @@ const Signup = () => {
               {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
           </form>
-          <p>
-            Already have an account? <a href="/login">Sign In</a>
-          </p>
+          <p>Already have an account? <a href="/login">Sign In</a></p>
         </div>
       </div>
     </div>
