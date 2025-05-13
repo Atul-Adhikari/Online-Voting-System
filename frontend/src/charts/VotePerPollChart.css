@@ -1,0 +1,114 @@
+/* === Full Page Wrapper === */
+.chart-page {
+  width: 100vw;
+  height: 100vh;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* === Optional Top Title === */
+.chart-title {
+  font-size: 2.2rem;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* === Back Button === */
+.back-button {
+  align-self: flex-start;
+  margin-bottom: 1.5rem;
+  background-color: #ff4d4d;
+  color: white;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #e60000;
+  transform: translateY(-2px);
+}
+
+/* === Chart Container Card === */
+.chart-container {
+  width: 96%;
+  max-width: 1100px;
+  padding: 2rem 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2rem;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  overflow-x: auto;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: scale(1.01);
+}
+
+/* === Card Title (inside chart box) === */
+.chart-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 2rem;
+  letter-spacing: 0.3px;
+}
+
+/* === Chart Wrapper === */
+.chart-inner-wrapper {
+  width: 100%;
+  min-height: 400px;
+  max-height: 500px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  position: relative;
+}
+
+/* === Scrollable Chart Canvas === */
+.chart-inner-wrapper canvas {
+  min-width: 1000px;
+  max-width: none;
+  height: auto;
+  display: block;
+}
+
+/* === Responsive Adjustments === */
+@media (max-width: 768px) {
+  .chart-container {
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+  }
+
+  .chart-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .chart-title {
+    font-size: 1.8rem;
+  }
+
+  .chart-inner-wrapper {
+    min-height: 300px;
+  }
+
+  .chart-inner-wrapper canvas {
+    min-width: 700px;
+  }
+}

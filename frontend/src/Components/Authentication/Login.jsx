@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';  
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Auth.css';
 import logoImage from '../../assets/Logo2.png';
@@ -8,10 +8,15 @@ import { AuthContext } from '../../context/AuthContext';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { setAuth } = useContext(AuthContext);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,46 +33,60 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:3333/users/login', userData);
-      console.log(response.data)
-      const { accessToken, fullName, email: userEmail, role } = response.data;
+      const data = response.data;
 
-      if (accessToken) {
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("userName", fullName);
-        localStorage.setItem("userEmail", userEmail);
-        localStorage.setItem("role", role);
-
-
-
-        // Fetch additional user details
-        const profileRes = await axios.get('http://localhost:3333/users/me', {
-          headers: {
-            Authorization: `Bearer ${accessToken}`
-          }
-        });
-      
-        const { gender, dateOfBirth, phone, address, nationalID } = profileRes.data;
-      
-        // 🆕 Store them in localStorage
-        localStorage.setItem("gender", gender);
-        localStorage.setItem("dob", dateOfBirth);
-        localStorage.setItem("phone", phone);
-        localStorage.setItem("address", address);
-        localStorage.setItem("nationalID", nationalID);
-
-        setAuth({ token: accessToken, role });
-
-        if (role === "admin") {
-          navigate('/admin');
+      if (data.error) {
+        const backendMsg = data.error.toLowerCase();
+        if (backendMsg.includes("not verified")) {
+          setError("Wait till the admin verifies your ID.");
         } else {
-          navigate('/userDashboard');
+          setError("Invalid email or password.");
         }
+        return;
+      }
+
+      const { accessToken, fullName, email: userEmail, role } = data;
+
+      if (!accessToken) {
+        setError("Invalid email or password.");
+        return;
+      }
+
+      // Save user info in localStorage
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("userName", fullName);
+      localStorage.setItem("userEmail", userEmail);
+      localStorage.setItem("role", role);
+
+      const profileRes = await axios.get('http://localhost:3333/users/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const { gender, dateOfBirth, phone, address, nationalID } = profileRes.data;
+
+      localStorage.setItem("gender", gender);
+      localStorage.setItem("dob", dateOfBirth);
+      localStorage.setItem("phone", phone);
+      localStorage.setItem("address", address);
+      localStorage.setItem("nationalID", nationalID);
+
+      setAuth({ token: accessToken, role });
+
+      if (role === "admin") {
+        navigate('/admin');
       } else {
-        setError('Invalid login. No token returned.');
+        navigate('/userDashboard');
       }
     } catch (err) {
       console.error('Error logging in:', err.response?.data || err.message);
-      setError(err.response?.data?.error || 'Invalid credentials. Please try again.');
+      const backendMsg = err.response?.data?.error?.toLowerCase() || '';
+      if (backendMsg.includes("not verified")) {
+        setError("Wait till the admin verifies your ID.");
+      } else {
+        setError("Invalid email or password.");
+      }
     } finally {
       setLoading(false);
     }
@@ -101,15 +120,23 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="input-group">
+            <div className="input-group password-group">
               <i className="fas fa-lock"></i>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={togglePasswordVisibility}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <i className={showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'}></i>
+              </button>
             </div>
 
             <div className="forgot-password">
