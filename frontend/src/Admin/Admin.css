@@ -8,8 +8,8 @@
 html, body {
     width: 100%;
     height: 100%;
+    background-color: #3b3a67; /* Match bottom gradient to avoid white gap */
     font-family: 'Poppins', sans-serif;
-    /* background-color: #0a0a23; */
     color: #fff;
     overflow-x: hidden;
 }
@@ -17,13 +17,13 @@ html, body {
 /* Admin Dashboard Container */
 .admin-dashboard {
     width: 100vw;
-    height: 100vh;
-    padding: 4rem 2rem;
+    min-height: 100vh;
     background: linear-gradient(130deg, #4a90e2, #377daf 45%, #3b3a67);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    padding: 4rem 2rem;
     position: relative;
 }
 
@@ -32,7 +32,7 @@ html, body {
     font-size: 8rem;
     font-weight: 1000;
     margin-bottom: 0.5rem;
-    text-align:center;
+    text-align: center;
     color: #ffffff;
     animation: fadeIn 1s ease-in-out;
 }
@@ -44,18 +44,22 @@ html, body {
     text-align: center;
     margin-bottom: 3rem;
     color: #f1f1f1;
-   
     animation: fadeIn 1s ease-in-out;
     z-index: 2;
+}
+
+/* Cards Grid Container */
+.admin-cards-container {
+    width: 100%;
+    overflow-x: auto;
 }
 
 /* Cards Grid */
 .admin-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
-    max-width: 1300px;
-    width: 100%;
+    min-width: 1300px;
     z-index: 2;
 }
 
@@ -71,8 +75,12 @@ html, body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: slideFadeIn 0.8s ease forwards;
     text-align: center;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Hover Effect */
 .admin-card:hover {
     transform: scale(1.05);
     box-shadow: 0 0 18px rgba(255, 255, 255, 0.25);
@@ -93,6 +101,7 @@ html, body {
     color: #000000;
     margin-bottom: 1.5rem;
     line-height: 1.6;
+    flex-grow: 1;
 }
 
 /* Buttons */
@@ -102,17 +111,29 @@ html, body {
     font-size: 1rem;
     font-weight: 600;
     color: #fff;
-    background-color: #ff6b81;
     border: none;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    margin-top: auto;
 }
 
+/* Hover Colors */
 .admin-button:hover {
-    background-color: #ff4757;
-    box-shadow: 0 0 15px #ff6b81;
     transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
+
+.pink-btn { background-color: #ff6b81; }
+.pink-btn:hover { background-color: #ff4081; }
+
+.purple-btn { background-color: #8e44ad; }
+.purple-btn:hover { background-color: #a569bd; }
+
+.indigo-btn { background-color: #3b3a67; }
+.indigo-btn:hover { background-color: #5d5f90; }
+
+.teal-btn { background-color: #009688; color: white; }
+.teal-btn:hover { background-color: #26a69a; }
 
 /* Icons */
 .admin-card-title i,
@@ -120,6 +141,8 @@ html, body {
     font-size: 1.3rem;
     margin-right: 8px;
 }
+
+/* Logout Button */
 .logout-button {
     position: absolute;
     top: 20px;
@@ -141,7 +164,6 @@ html, body {
     transform: translateY(-2px);
 }
 
-
 /* Animations */
 @keyframes slideFadeIn {
     from { opacity: 0; transform: translateY(50px); }
@@ -153,17 +175,48 @@ html, body {
     to { opacity: 1; }
 }
 
+/* Button Color Text Variants */
+.pink { color: #000000; }
+.purple { color: #000000; }
+.indigo { color: #000000; }
+.teal { color: #000000; }
+
 /* Responsive Adjustments */
+
+/* Tablets */
+@media (max-width: 1300px) {
+    .admin-cards {
+        grid-template-columns: repeat(2, 1fr);
+        min-width: unset;
+    }
+}
+
+/* Phones */
 @media (max-width: 768px) {
+    .admin-dashboard {
+        padding: 2rem 1rem;
+    }
+
     .admin-logo {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
 
     .admin-title {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
-    .admin-dashboard {
-        padding: 2rem 1rem;
+    .admin-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .logout-button {
+        top: 15px;
+        right: 20px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
     }
 }
