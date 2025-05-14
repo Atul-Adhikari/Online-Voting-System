@@ -12,7 +12,6 @@ const UserDashboard = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
-
   const carouselImages = [
     "/Voting1.jpg",
     "/Voting2.jpg",
@@ -91,7 +90,7 @@ const UserDashboard = () => {
             <Link to="/userDashboard/profile">Profile</Link>
           </li>
           <li>
-            <Link to="/userDashboard/candidates">Candidates Panel</Link>
+            <Link to="/userDashboard/candidates">Voting Panel</Link>
           </li>
           <li>
             <Link to="/userDashboard/electionInfo">Election Info</Link>
@@ -117,9 +116,11 @@ const UserDashboard = () => {
                 {elections.length === 0 && <p>No elections found.</p>}
 
                 <div className={styles.summaryCards}>
+                  
                   <div className={styles.card}><h3>Total Elections</h3><p>{elections.length}</p></div>
                   <div className={styles.card}><h3>Active Elections</h3><p>{elections.filter((e) => e.status === "active").length}</p></div>
                   <div className={styles.card}><h3>Completed Elections</h3><p>{elections.filter((e) => e.status === "completed").length}</p></div>
+
                 </div>
 
                 <div className={styles.carouselContainer}>
@@ -130,21 +131,34 @@ const UserDashboard = () => {
                   <h3>Election Rules</h3>
                   <ul>
                     <li>📝 You must be registered to vote in the election.</li>
-                    <li>🗳️ Each voter is allowed to vote only once in each election.</li>
-                    <li>🔒 Your vote is confidential and cannot be changed once submitted.</li>
-                    <li>🚫 Voting for multiple candidates in the same position will result in disqualification.</li>
+                    <li>
+                      🗳️ Each voter is allowed to vote only once in each
+                      election.
+                    </li>
+                    <li>
+                      🔒 Your vote is confidential and cannot be changed once
+                      submitted.
+                    </li>
+                    <li>
+                      🚫 You can cast vote only in the polls of your region.
+                    </li>
                   </ul>
                 </div>
 
                 <div className={styles.upcoming}>
-                  <h3>Upcoming Elections</h3>
-                  {elections.filter((e) => new Date(e.createdAt) > new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)).map((e) => (
-                    <div key={e._id} className={styles.upcomingItem}>
-                      <strong>{e.title}</strong> — Starts: {new Date(e.createdAt).toLocaleDateString()}
-                    </div>
-                  ))}
-                </div>
+                  <h3>Ongoing Elections</h3>
+                  {elections
+                    .filter((e) => e.status === "active")
+                    .map((e) => (
+                      <div key={e._id} className={styles.upcomingItem}>
+                        <strong>{e.title}</strong> — Started:{" "}
+                        {new Date(e.createdAt).toLocaleDateString()}
+                      </div>
+                    ))}
 
+                </div>
+                {/* Add this before the full elections grid */}
+                <h3 className={styles.overview}>All Elections Overview</h3>
                 <div className={styles.electionGrid}>
                   {elections.map((election) => (
                     <div key={election._id} className={styles.electionCard}>
@@ -165,9 +179,9 @@ const UserDashboard = () => {
                           <div className={styles.candidateGrid}>
                             {election.options.map((opt, idx) => (
                               <div key={idx} className={styles.candidateCard}>
-                                {opt.image ? (
+                                {opt.imageUrl ? (
                                   <img
-                                    src={`http://localhost:3333/uploads/${opt.image}`}
+                                    src={opt.imageUrl}
                                     alt={opt.name}
                                     className={styles.candidateImage}
                                     onError={(e) => {
@@ -179,7 +193,18 @@ const UserDashboard = () => {
                                   <div className={styles.candidateImage} style={{ background: "#ccc" }} />
                                 )}
                                 <div>{opt.name}</div>
-                                {opt.party && <div className={styles.candidateParty}>{opt.party}</div>}
+                                {opt.party && (
+                                  <div className={styles.candidateParty}>
+                                    {opt.party}
+                                  </div>
+                                )}
+                                {election.status === "inactive" &&
+                                  typeof opt.votes === "number" && (
+                                    <div className={styles.voteCount}>
+                                      Votes: {opt.votes}
+                                    </div>
+                                  )}
+
                               </div>
                             ))}
                           </div>
