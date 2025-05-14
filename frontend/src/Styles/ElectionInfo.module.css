@@ -119,3 +119,12 @@
   color: #95a5a6;
   margin-top: 2rem;
 }
+
+
+.summaryList {
+  list-style: none;
+  padding-left: 0;
+  line-height: 1.8;
+  font-size: 1rem;
+  color: #34495e;
+}

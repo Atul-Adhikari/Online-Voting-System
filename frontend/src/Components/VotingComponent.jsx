@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "../Styles/VotingComponent.module.css";
-import logo from "/Logo2.png"; // Adjust path as needed
+import logo from "/Logo2.png";
 
 const VotingComponent = () => {
   const [activePolls, setActivePolls] = useState([]);
@@ -149,7 +149,7 @@ const VotingComponent = () => {
                           className={styles.candidateImage}
                         />
                       )}
-                      <p className={styles.votes}>Votes: {candidate.votes}</p>
+                      {/* <p className={styles.votes}>Votes: {candidate.votes}</p> */}
                       {candidate.platform && candidate.platform.length > 0 && (
                         <ul className={styles.platform}>
                           {candidate.platform.map((point, idx) => (
