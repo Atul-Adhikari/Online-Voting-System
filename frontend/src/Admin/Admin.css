@@ -5,14 +5,17 @@
     box-sizing: border-box;
 }
 
-html, body {
+
+/* It was changing the bg of entire website --> Atul Adhikari  */
+
+/* html, body {
     width: 100%;
     height: 100%;
-    background-color: #3b3a67; /* Match bottom gradient to avoid white gap */
+    background-color: #3b3a67;
     font-family: 'Poppins', sans-serif;
     color: #fff;
     overflow-x: hidden;
-}
+} */
 
 /* Admin Dashboard Container */
 .admin-dashboard {
