@@ -7,31 +7,39 @@ import { FaUserCircle } from "react-icons/fa";
 import styles from "../Styles/Navbar.module.css";
 
 function NavBar() {
+  // State to track whether the mobile menu is open or closed
   const [click, setClick] = useState(false);
+
+  // Toggle function for the mobile menu
   const handleClick = () => setClick(!click);
 
   return (
     <nav className={styles.navbar}>
       <div className={styles.navContainer}>
+        {/* Website Name / Logo */}
         <NavLink exact to="/" className={styles.webName}>
           E-MATADAN
         </NavLink>
 
+        {/* Navigation menu list */}
         <ul
           className={
+            // Apply active class if the mobile menu is open
             click ? `${styles.navMenu} ${styles.active}` : styles.navMenu
           }
         >
+          {/* Navigation links */}
           <li className={styles.navItem}>
             <NavLink
               exact
               to="/"
               className={({ isActive }) =>
+                // Highlight active link
                 isActive
                   ? `${styles.navLinks} ${styles.active}`
                   : styles.navLinks
               }
-              onClick={handleClick}
+              onClick={handleClick} // Close mobile menu when link is clicked
             >
               Home
             </NavLink>
@@ -80,12 +88,16 @@ function NavBar() {
           </li>
         </ul>
 
+        {/* Icon section for profile and mobile menu toggle */}
         <div className={styles.iconContainer}>
+          {/* Profile icon */}
           <div className={styles.profileIcon}>
             <FaUserCircle />
           </div>
 
+          {/* Mobile menu toggle icon */}
           <div className={styles.navIcon} onClick={handleClick}>
+            {/* Show close icon if the menu is open, otherwise show hamburger */}
             {click ? <IoClose /> : <RxHamburgerMenu />}
           </div>
         </div>

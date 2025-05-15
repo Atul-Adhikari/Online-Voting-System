@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "../Styles/Profile.module.css";
 
 const Profile = () => {
+  // State to hold user profile information
   const [user, setUser] = useState({
     fullName: "",
     email: "",
@@ -11,8 +12,10 @@ const Profile = () => {
     province: "",
   });
 
+  // State to track the loading state
   const [loading, setLoading] = useState(true);
 
+  // Fetch user data from localStorage when the component mounts
   useEffect(() => {
     const userEmail = localStorage.getItem("userEmail");
     const userName = localStorage.getItem("userName");
@@ -21,6 +24,7 @@ const Profile = () => {
     const userDob = localStorage.getItem("dob");
     const userProvince = localStorage.getItem("address");
 
+    // If user data exists in localStorage, update the state
     if (userEmail && userName) {
       setUser({
         email: userEmail,
@@ -29,27 +33,32 @@ const Profile = () => {
         gender: userGender || "Not provided",
         dob: userDob
           ? new Date(userDob).toISOString().split("T")[0]
-          : "Not provided",
+          : "Not provided", // Format DOB to YYYY-MM-DD
         province: userProvince || "Not provided",
       });
     }
-    setLoading(false);
+    setLoading(false); // Set loading state to false after fetching the data
   }, []);
 
+  // Show loading message while fetching data
   if (loading) {
     return <div className={styles.profile_container}>Loading profile...</div>;
   }
 
   return (
     <div className={styles.profile_container}>
+      {/* Profile card container */}
       <div className={styles.profile_card}>
         <h2>My Profile</h2>
+        {/* Info message */}
         <p className={styles.info_message}>
           Here’s the information we have saved for you. If anything looks
           incorrect, please contact support.
         </p>
 
+        {/* Grid to display user profile information */}
         <div className={styles.profile_grid}>
+          {/* Display individual profile fields */}
           <div className={styles.profile_box}>
             <span className={styles.box_label}>Full Name</span>
             <span className={styles.box_value}>{user.fullName}</span>
@@ -81,6 +90,7 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* Support message with a button to contact support */}
         <p className={styles.support_message}>
           Need changes?{" "}
           <button

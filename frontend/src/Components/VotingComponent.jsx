@@ -3,17 +3,20 @@ import styles from "../Styles/VotingComponent.module.css";
 import logo from "/Logo2.png";
 
 const VotingComponent = () => {
-  const [activePolls, setActivePolls] = useState([]);
-  const [selectedVotes, setSelectedVotes] = useState({});
-  const [hasVoted, setHasVoted] = useState({});
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  // State variables
+  const [activePolls, setActivePolls] = useState([]); // Stores active polls
+  const [selectedVotes, setSelectedVotes] = useState({}); // Stores the selected candidate for each poll
+  const [hasVoted, setHasVoted] = useState({}); // Keeps track of whether the user has voted in each poll
+  const [error, setError] = useState(null); // Stores error messages
+  const [successMessage, setSuccessMessage] = useState(""); // Stores success messages
+  const [loading, setLoading] = useState(false); // Tracks loading state
 
+  // Fetch active polls when the component is mounted
   useEffect(() => {
     fetchActivePolls();
   }, []);
 
+  // Function to fetch active polls from the server
   const fetchActivePolls = async () => {
     try {
       setLoading(true);
@@ -51,6 +54,7 @@ const VotingComponent = () => {
     }
   };
 
+  // Function to handle selection of candidate in a poll
   const handleVoteChange = (pollId, candidateId) => {
     setSelectedVotes((prev) => ({
       ...prev,
@@ -58,6 +62,7 @@ const VotingComponent = () => {
     }));
   };
 
+  // Function to handle the submission of a vote
   const handleVoteSubmit = async (pollId) => {
     const candidateId = selectedVotes[pollId];
     if (!candidateId) {
@@ -103,6 +108,7 @@ const VotingComponent = () => {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
+        {/* Logo and header */}
         <img src={logo} alt="Election Logo" className={styles.logo} />
         <h1>Active Elections</h1>
         <p className={styles.description}>
@@ -110,14 +116,21 @@ const VotingComponent = () => {
         </p>
       </header>
 
+      {/* Loading state */}
       {loading && <p>Loading polls...</p>}
+
+      {/* Display error message if there was an issue */}
       {error && <div className={styles.error}>{error}</div>}
+
+      {/* Display success message after successful vote */}
       {successMessage && <div className={styles.success}>{successMessage}</div>}
 
+      {/* If no active polls, show this message */}
       {activePolls.length === 0 && !loading && (
         <p>No active elections available at the moment.</p>
       )}
 
+      {/* Map over active polls and display each poll */}
       {activePolls.map((poll) => (
         <div key={poll._id} className={styles.electionCard}>
           <h2>{poll.title}</h2>
@@ -129,6 +142,7 @@ const VotingComponent = () => {
           {/* Render candidates (options) */}
           {poll.options && poll.options.length > 0 ? (
             !hasVoted[poll._id] ? (
+              // If the user hasn't voted, show options for voting
               <form className={styles.form}>
                 {poll.options.map((candidate) => (
                   <label key={candidate._id} className={styles.candidateCard}>
@@ -149,7 +163,7 @@ const VotingComponent = () => {
                           className={styles.candidateImage}
                         />
                       )}
-                      {/* <p className={styles.votes}>Votes: {candidate.votes}</p> */}
+                      {/* Display candidate's platform (if available) */}
                       {candidate.platform && candidate.platform.length > 0 && (
                         <ul className={styles.platform}>
                           {candidate.platform.map((point, idx) => (
@@ -169,6 +183,7 @@ const VotingComponent = () => {
                 </button>
               </form>
             ) : (
+              // If the user has already voted, show a thank you message
               <div className={styles.votedMessage}>
                 Thank you! Your vote has been submitted.
               </div>
