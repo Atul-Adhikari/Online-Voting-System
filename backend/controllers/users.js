@@ -120,6 +120,12 @@ const registerUser = async (req, res) => {
         .status(400)
         .json({ error: "Please enter a valid email address" });
     }
+    const allowedDomains = ["gmail.com", "yahoo.com"];
+    const domain = emailLowerCase.split("@")[1];
+    if (!allowedDomains.includes(domain)) {
+      return res.status(400).json({ error: "Only Gmail or Yahoo emails are allowed." });
+    }
+
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
         error:
@@ -177,6 +183,13 @@ const loginUser = async (req, res) => {
   if (!(email && password)) {
     return res.json({ error: "Email or password not provided." });
   }
+  
+  const allowedDomains = ["gmail.com", "yahoo.com"];
+  const domain = email.split("@")[1];
+  if (!allowedDomains.includes(domain)) {
+    return res.status(400).json({ error: "Only Gmail or Yahoo emails are allowed." });
+  }
+
 
   const user = await User.findOne({ email });
 
