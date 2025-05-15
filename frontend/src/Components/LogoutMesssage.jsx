@@ -6,21 +6,21 @@ const LogoutMessage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Clear user-related data if needed
-    localStorage.clear();
+    localStorage.clear(); // Clear user-related data
 
-    // Redirect after 3 seconds
     const timer = setTimeout(() => {
       navigate("/login");
     }, 3000);
 
-    return () => clearTimeout(timer); // cleanup
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
     <div className={styles.logoutMessage}>
-      <img src="/Loading_icon.gif" alt="Loading..." />
-      <p>Please wait while logging out.....</p>
+      <div className={styles.logoutBox}>
+        <img src="/Loading_icon.gif" alt="Loading..." />
+        <p>Please wait while logging out...</p>
+      </div>
     </div>
   );
 };

@@ -45,7 +45,7 @@ const forgotPassword = async (req, res) => {
     user.resetPasswordToken = resetToken;
     await user.save();
 
-    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
     const mailOptions = {
       from: process.env.SMTP_USER,
@@ -53,7 +53,7 @@ const forgotPassword = async (req, res) => {
       subject: 'Password Reset Request',
       html: `
         <p>You requested a password reset</p>
-        <p>Click this <a href="${resetUrl}">link</a> to reset your password</p>
+        <p>Click this <a href="${resetUrl}" target="_blank">link</a> to reset your password</p>
         <p>This link will expire in 1 hour</p>
       `
     };
@@ -68,7 +68,8 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { newPassword } = req.body;
+    const { token } = req.params;
 
     if (!(token && newPassword)) {
       return res.status(400).json({ error: "All fields are required" });
@@ -170,25 +171,30 @@ const registerUser = async (req, res) => {
     }
 }
 
-const loginUser =  async (req, res) => {
-    const { email, password } = req.body;
-  
-    if (!(email && password)) {
-      return res.json({ error: "Email or password not provided." });
-    }
-  
-    const user = await User.findOne({ email });
-  
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-      });
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-      return res.json({ fullName: user.fullName, email, role: user.role, accessToken: token });
-    } else {
-      return res.json({ error: "Incorrect email address or password" });
-    }
+  if (!(email && password)) {
+    return res.json({ error: "Email or password not provided." });
   }
+
+  const user = await User.findOne({ email });
+
+  if (user && (await bcrypt.compare(password, user.password))) {
+    if (!user.status) {
+      return res.json({ error: "User not verified" }); // Only this block added
+    }
+
+    const token = jwt.sign({ user_id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    return res.json({ fullName: user.fullName, email, role: user.role, accessToken: token });
+  } else {
+    return res.json({ error: "Incorrect email address or password" });
+  }
+};
+
 
 const getUser = async (req, res) => {
     try {

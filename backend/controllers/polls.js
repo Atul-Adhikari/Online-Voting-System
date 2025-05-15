@@ -22,13 +22,30 @@ const createPoll = async (req, res) => {
 
 const updatePoll = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { title, description, duration, address, options, status } = req.body;
+
+    if (!title || !description || !options || options.length < 2) {
+      return res.status(400).json({ message: "Poll must have a title, description, and at least 2 options." });
+    }
 
     const poll = await Poll.findByIdAndUpdate(
       req.params.id,
-      { $set: { status } },
+      {
+        $set: {
+          title,
+          description,
+          duration,
+          address,
+          options,
+          status: status || "active"
+        }
+      },
       { new: true, runValidators: true }
     );
+
+    if (!poll) {
+      return res.status(404).json({ message: "Poll not found" });
+    }
 
     res.json({ message: "Poll updated successfully", poll });
   } catch (err) {
@@ -36,6 +53,7 @@ const updatePoll = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 const getAllPolls = async (req, res) => {
   try {
@@ -60,6 +78,22 @@ const getAllPolls = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+//added
+const closePoll = async (req, res) => {
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: "Poll not found" });
+
+    poll.status = "inactive";
+    await poll.save();
+
+    res.json({ message: "Poll closed manually", poll });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 const votePoll = async (req, res) => {
   try {
@@ -170,13 +204,33 @@ const deletePoll = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const publishPoll = async (req, res) => {
+  try {
+    const poll = await Poll.findById(req.params.id);
+    if (!poll) return res.status(404).json({ message: "Poll not found" });
+
+    if (poll.status !== "completed" && poll.status !== "inactive") {
+      return res.status(400).json({ message: "Only completed or inactive polls can be published." });
+    }
+
+    poll.isPublished = true;
+    await poll.save();
+
+    res.json({ message: "Poll result published", poll });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 
 module.exports = {
   createPoll,
   updatePoll,
+  closePoll,
   getAllPolls,
   getPollID,
   getPastPolls,
   votePoll,
-  deletePoll
+  deletePoll,
+  publishPoll
 };
