@@ -3,6 +3,8 @@ import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import styles from "../Styles/UserDashboard.module.css";
 import VotingComponent from "./VotingComponent";
 import ElectionInfo from "./ElectionInfo";
+import Result from "./Result"; 
+
 import Footer from "./Footer";
 import Profile from "./Profile";
 
@@ -86,6 +88,10 @@ const UserDashboard = () => {
           <li>
             <Link to="/userDashboard">Dashboard</Link>
           </li>
+          <li>
+            <Link to="/userDashboard/results">Results</Link> 
+          </li>
+
           <li>
             <Link to="/userDashboard/profile">Profile</Link>
           </li>
@@ -219,6 +225,8 @@ const UserDashboard = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="candidates" element={<VotingComponent />} />
           <Route path="electionInfo" element={<ElectionInfo />} />
+          <Route path="results" element={<Result />} /> // 👈 new route
+
         </Routes>
       </div>
     </div>

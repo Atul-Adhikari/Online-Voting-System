@@ -372,6 +372,29 @@ body {
   border: 2px solid #ffffff;
 }
 
+.publish-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.publish-btn:hover {
+  background-color: #218838;
+}
+
+.published-label {
+  display: inline-block;
+  margin-top: 10px;
+  color: #28a745;
+  font-weight: bold;
+}
+
+
 /* ------------------------------------
   Animations
 ------------------------------------ */

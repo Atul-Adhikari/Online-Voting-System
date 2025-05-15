@@ -7,7 +7,7 @@ const cors = require("cors");
 const app = express();
 const PORT = 3333;
 
-// ✅ Enable CORS for frontend running on localhost:5173
+// Enable CORS for frontend running on localhost:5173
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true

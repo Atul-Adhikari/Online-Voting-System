@@ -1,18 +1,3 @@
-const multer = require("multer");
-const path = require("path");
-
-// Configure storage location and file name
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Make sure this folder exists
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ storage });
 
 const express = require("express");
 const router = express.Router();
@@ -21,12 +6,14 @@ const authMiddleware = require("../middleware/auth");
 const adminMiddleware = require("../middleware/isAdmin");
 const {
   getAllPolls,
+  closePoll,
   createPoll,
   updatePoll,
   getPollID,
   getPastPolls,
   votePoll,
-  deletePoll
+  deletePoll,
+  publishPoll
 } = require("../controllers/polls");
 
 router.get("/", authMiddleware, getAllPolls);
@@ -37,7 +24,11 @@ router.get("/:id", authMiddleware, getPollID);
 
 router.post("/vote", authMiddleware, votePoll);
 
-router.post("/", authMiddleware, adminMiddleware, upload.array("images"), createPoll);//added
+router.post("/", authMiddleware, adminMiddleware, createPoll);
+
+router.post("/:id/close", authMiddleware, adminMiddleware, closePoll);
+
+router.patch("/:id/publish", authMiddleware, adminMiddleware, publishPoll);
 
 router.put("/:id", authMiddleware, adminMiddleware, updatePoll);
 

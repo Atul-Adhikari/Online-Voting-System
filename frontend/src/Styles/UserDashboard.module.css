@@ -1,14 +1,11 @@
-html,
-body {
-  height: 100%;
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #333;
-}
-
+/* Reset + Base (Scoped override for Admin's html/body) */
 .dashboardContainer {
+  background-color: #f4f6f9;
+  color: #333;
   min-height: 100vh;
-  /* display: flex; No longer needed because sidebar is fixed */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  overflow-x: hidden;
 }
 
 /* Sidebar */
@@ -168,10 +165,11 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-
-.overview{
+/* Section Title */
+.overview {
   margin-top: 50px;
 }
+
 /* Election Cards */
 .electionGrid {
   display: grid;
@@ -206,6 +204,7 @@ body {
   text-align: center;
   height: 30px;
 }
+
 .statusActive {
   background-color: #27ae60;
   color: white;
@@ -214,6 +213,19 @@ body {
 .statusInactive {
   background-color: #c0392b;
   color: white;
+}
+
+.electionDescription {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.electionMeta {
+  font-size: 0.85rem;
+  color: #777;
+  line-height: 1.5;
+  margin-bottom: 1rem;
 }
 
 /* Candidates */
@@ -251,7 +263,13 @@ body {
   color: #888;
 }
 
-/* Error message */
+.voteCount {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #555;
+}
+
+/* Error Message */
 .errorMessage {
   color: #e74c3c;
   margin-bottom: 1rem;

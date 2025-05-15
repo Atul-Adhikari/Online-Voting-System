@@ -19,7 +19,8 @@ router.post("/login", loginUser);
 
 router.post("/forgot-password", forgotPassword);
 
-router.post("/reset-password", resetPassword);
+router.post("/reset-password/:token", resetPassword);
+
 
 router.get("/me", authMiddleware, getUser);
 
@@ -27,7 +28,7 @@ router.post("/status/:id", authMiddleware, adminMiddleware, changeStatus);
 
 router.get("/all", authMiddleware, adminMiddleware, getAllUsers);
 
-//added
+//added   
 router.delete("/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);

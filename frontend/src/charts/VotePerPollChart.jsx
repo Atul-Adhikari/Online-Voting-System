@@ -9,9 +9,11 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels"; // ✅ Import plugin
 import "./VotePerPollChart.css";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+// ✅ Register all necessary components
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend, ChartDataLabels);
 
 const VotePerPollChart = () => {
   const navigate = useNavigate();
@@ -42,7 +44,7 @@ const VotePerPollChart = () => {
             {
               label: "Total Votes",
               data: voteCounts,
-              backgroundColor: "rgba(255, 99, 132, 0.8)",
+              backgroundColor: "rgba(255, 99, 132, 0.85)", // More visible
               borderRadius: 8,
             },
           ],
@@ -65,6 +67,16 @@ const VotePerPollChart = () => {
           color: "#fff",
           font: { size: 14 },
         },
+      },
+      datalabels: {
+        color: "#fff",                 // White label text
+        anchor: "center",
+        align: "center",
+        font: {
+          weight: "bold",
+          size: 10,
+        },
+        formatter: Math.round,
       },
     },
     scales: {
@@ -94,7 +106,7 @@ const VotePerPollChart = () => {
 
       <div className="chart-container">
         <div className="chart-inner-wrapper">
-          <Bar data={chartData} options={options} />
+          <Bar data={chartData} options={options} plugins={[ChartDataLabels]} />
         </div>
       </div>
     </div>

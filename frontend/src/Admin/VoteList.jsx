@@ -154,6 +154,25 @@ const VoteList = () => {
       console.error(err);
     }
   };
+  const publishPoll = async (id) => {
+  try {
+    const res = await fetch(`http://localhost:3333/polls/${id}/publish`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+
+    if (!res.ok) throw new Error("Failed to publish");
+
+    alert("Poll published successfully!");
+    fetchPolls(); // Refresh the list
+  } catch (err) {
+    alert("Error publishing result.");
+    console.error(err);
+  }
+};
+
 
   const calculateTotalVotes = (options) =>
     options.reduce((sum, opt) => sum + opt.votes, 0);
@@ -333,6 +352,19 @@ const VoteList = () => {
                       <button onClick={() => deletePoll(poll._id)} id="delete-btn">
                         <i className="fa fa-trash"></i> Delete
                       </button>
+                      {poll.status?.toLowerCase() === "inactive" && !poll.isPublished && (
+                      <button
+                        onClick={() => publishPoll(poll._id)}
+                        className="action-btn publish-btn"
+                      >
+                        <i className="fa fa-check-circle"></i> Publish Result
+                      </button>
+                    )}
+
+                    {poll.isPublished && (
+                      <span className="published-label"> Result Published</span>
+                    )}
+
 
                     </div>
                   </>

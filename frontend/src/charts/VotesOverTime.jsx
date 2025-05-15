@@ -34,9 +34,10 @@ const VotesOverTime = () => {
 
         const data = await res.json();
 
-        // Group polls by date (YYYY-MM-DD)
+        // Group polls by local date (YYYY-MM-DD in local time)
         const grouped = data.reduce((acc, poll) => {
-          const dateKey = new Date(poll.createdAt).toISOString().split("T")[0];
+          const localDate = new Date(poll.createdAt);
+          const dateKey = localDate.toLocaleDateString("en-CA"); // YYYY-MM-DD
           acc[dateKey] = (acc[dateKey] || 0) + 1;
           return acc;
         }, {});
