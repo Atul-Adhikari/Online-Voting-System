@@ -3,15 +3,20 @@ import { IoPeopleSharp } from "react-icons/io5";
 import styles from "../Styles/ElectionInfo.module.css";
 
 const ElectionInfo = () => {
+  // State to hold the current poll details
   const [poll, setPoll] = useState(null);
+  // State to hold the list of candidates
   const [candidates, setCandidates] = useState([]);
+  // State to manage loading status
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Function to fetch poll data from the backend API
     const fetchPollData = async () => {
       const token = localStorage.getItem("token");
       const userAddress = localStorage.getItem("address");
 
+      // Ensure required data exists in localStorage
       if (!token || !userAddress) {
         console.error("Missing token or user address in localStorage.");
         setLoading(false);
@@ -19,6 +24,7 @@ const ElectionInfo = () => {
       }
 
       try {
+        // Make a request to fetch all polls
         const res = await fetch("http://localhost:3333/polls", {
           headers: {
             "Content-Type": "application/json",
@@ -27,14 +33,17 @@ const ElectionInfo = () => {
         });
 
         const data = await res.json();
+
+        // Check if the response contains polls
         if (Array.isArray(data) && data.length > 0) {
-          // Match poll address with user address (case-insensitive)
+          // Find a poll that matches the user's province (case-insensitive)
           const matchingPoll = data.find(
             (poll) =>
               poll.address.trim().toLowerCase() ===
               userAddress.trim().toLowerCase()
           );
 
+          // Set poll and candidate data if a match is found
           if (matchingPoll) {
             setPoll(matchingPoll);
             setCandidates(matchingPoll.options || []);
@@ -43,28 +52,35 @@ const ElectionInfo = () => {
           }
         }
       } catch (error) {
+        // Log any error during fetch
         console.error("Error fetching data:", error);
       } finally {
+        // Stop the loading spinner regardless of outcome
         setLoading(false);
       }
     };
 
+    // Call the fetch function when component mounts
     fetchPollData();
   }, []);
 
   return (
     <div className={styles.container}>
+      {/* Header Section */}
       <div className={styles.header}>
         <img src="/Logo2.png" alt="Election Commission Logo" />
         <h1>General Election 2025</h1>
       </div>
 
+      {/* Conditional loading indicator */}
       {loading ? (
         <p className={styles.loading}>Loading election details...</p>
       ) : (
         <>
+          {/* Show poll details if a matching poll is found */}
           {poll ? (
             <>
+              {/* Poll Basic Information Section */}
               <section className={styles.section}>
                 <h2>📜 {poll.title}</h2>
                 <p>{poll.description}</p>
@@ -80,6 +96,7 @@ const ElectionInfo = () => {
                 </div>
               </section>
 
+              {/* Summary Details Section */}
               <section className={styles.section}>
                 <h2>📋 Election Summary</h2>
                 <ul className={styles.summaryList}>
@@ -108,6 +125,7 @@ const ElectionInfo = () => {
                 </ul>
               </section>
 
+              {/* Candidate Details Section */}
               <section className={styles.section}>
                 <h2>
                   <IoPeopleSharp /> Meet the Candidates
@@ -139,6 +157,7 @@ const ElectionInfo = () => {
               </section>
             </>
           ) : (
+            // Message displayed if no poll is found for user's address
             <section className={styles.section}>
               <p className={styles.loading}>
                 ❌ No active election found for your province.
@@ -146,7 +165,7 @@ const ElectionInfo = () => {
             </section>
           )}
 
-          {/* Static sections always rendered */}
+          {/* Static Guidelines Section */}
           <section className={styles.section}>
             <h2>🧾 Voting Guidelines</h2>
             <ol className={styles.instructions}>
@@ -157,6 +176,7 @@ const ElectionInfo = () => {
             </ol>
           </section>
 
+          {/* Static Security Info Section */}
           <section className={styles.section}>
             <h2>🔐 Election Security</h2>
             <p>

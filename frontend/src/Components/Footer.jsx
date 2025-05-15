@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
-        {/* About Us */}
+        {/* About Us Section */}
         <div className={styles.aboutSection}>
           <h4>About Us</h4>
           <p>
@@ -17,7 +17,7 @@ const Footer = () => {
           </p>
         </div>
 
-        {/* Useful Links */}
+        {/* Useful Links Section */}
         <div className={styles.linksSection}>
           <h4>Useful Links</h4>
           <ul>
@@ -39,31 +39,31 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Contact */}
+        {/* Contact Information Section */}
         <div className={styles.contactSection}>
           <h4>Contact Us</h4>
-          <p>Email: support@votingsystem.com</p>
-          <p>Phone: +1 234 567 890</p>
+          <p>Email: strawhatonlinevotingsystem@gmail.com</p>
+          <p>Phone: 9745696192</p>
         </div>
       </div>
 
-      {/* Social Media Section - Follow Us */}
+      {/* Social Media Icons Section */}
       <div className={styles.socialSection}>
         <h4>Follow Us</h4>
         <div className={styles.socialIcons}>
           <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-            <FaFacebook/>
+            <FaFacebook />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-            <FaTwitter/>
+            <FaTwitter />
           </a>
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-            <FaInstagram/>
+            <FaInstagram />
           </a>
         </div>
       </div>
 
-      {/* Footer Bottom */}
+      {/* Bottom Copyright */}
       <div className={styles.footerBottom}>
         <p>&copy; 2025 Online Voting System. All rights reserved.</p>
       </div>

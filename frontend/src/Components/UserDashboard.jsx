@@ -9,11 +9,13 @@ import Footer from "./Footer";
 import Profile from "./Profile";
 
 const UserDashboard = () => {
+  // State variables for storing elections data and handling errors
   const [elections, setElections] = useState([]);
   const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
+  // Image carousel for the dashboard's top section
   const carouselImages = [
     "/Voting1.jpg",
     "/Voting2.jpg",
@@ -21,15 +23,18 @@ const UserDashboard = () => {
     "/Voting4.jpg",
   ];
 
+  // Handle logout by navigating to the logout route
   const handleLogout = () => {
     navigate("/logout");
   };
 
+  // User profile info (from localStorage)
   const userProfile = {
     name: localStorage.getItem("userName"),
     profilePic: "/Logo2.png",
   };
 
+  // Fetch elections data from the server when the component is mounted
   useEffect(() => {
     const fetchElections = async () => {
       const token = localStorage.getItem("token");
@@ -63,20 +68,24 @@ const UserDashboard = () => {
     };
 
     fetchElections();
-  }, []);
+  }, []); // Run this effect once when the component mounts
 
+  // Image carousel functionality for automatic slide change every 3 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % carouselImages.length);
     }, 3000);
 
+    // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, [carouselImages.length]);
 
   return (
     <div className={styles.dashboardContainer}>
+      {/* Sidebar with navigation links */}
       <nav className={styles.sidebar}>
         <div className={styles.profileSection}>
+          {/* User profile section */}
           <img
             src={userProfile.profilePic}
             alt="Profile"
@@ -85,6 +94,7 @@ const UserDashboard = () => {
           <h2 className={styles.username}>{userProfile.name}</h2>
         </div>
         <ul className={styles.navLinks}>
+          {/* Sidebar navigation links */}
           <li>
             <Link to="/userDashboard">Dashboard</Link>
           </li>
@@ -109,8 +119,10 @@ const UserDashboard = () => {
         </ul>
       </nav>
 
+      {/* Main content area */}
       <div className={styles.mainContent}>
         <Routes>
+          {/* Default route (Dashboard Overview) */}
           <Route
             index
             element={
@@ -118,39 +130,49 @@ const UserDashboard = () => {
                 <h2 className={styles.dashboardTitle}>Welcome, {userProfile.name}!</h2>
                 <p className={styles.dashboardSubheading}>Today is {new Date().toLocaleDateString()}</p>
 
+                {/* Display error message if any */}
                 {error && <p className={styles.errorMessage}>{error}</p>}
+                
+                {/* Display if no elections are found */}
                 {elections.length === 0 && <p>No elections found.</p>}
 
+                {/* Summary Cards for election statistics */}
                 <div className={styles.summaryCards}>
-                  
-                  <div className={styles.card}><h3>Total Elections</h3><p>{elections.length}</p></div>
-                  <div className={styles.card}><h3>Active Elections</h3><p>{elections.filter((e) => e.status === "active").length}</p></div>
-                  <div className={styles.card}><h3>Completed Elections</h3><p>{elections.filter((e) => e.status === "completed").length}</p></div>
-
+                  <div className={styles.card}>
+                    <h3>Total Elections</h3>
+                    <p>{elections.length}</p>
+                  </div>
+                  <div className={styles.card}>
+                    <h3>Active Elections</h3>
+                    <p>{elections.filter((e) => e.status === "active").length}</p>
+                  </div>
+                  <div className={styles.card}>
+                    <h3>Completed Elections</h3>
+                    <p>{elections.filter((e) => e.status === "completed").length}</p>
+                  </div>
                 </div>
 
+                {/* Carousel displaying images */}
                 <div className={styles.carouselContainer}>
-                  <img src={carouselImages[currentIndex]} alt={`Slide ${currentIndex + 1}`} className={styles.carouselImage} />
+                  <img
+                    src={carouselImages[currentIndex]}
+                    alt={`Slide ${currentIndex + 1}`}
+                    className={styles.carouselImage}
+                  />
                 </div>
 
+                {/* Election Rules Section */}
                 <div className={styles.recentActivity}>
                   <h3>Election Rules</h3>
                   <ul>
                     <li>📝 You must be registered to vote in the election.</li>
-                    <li>
-                      🗳️ Each voter is allowed to vote only once in each
-                      election.
-                    </li>
-                    <li>
-                      🔒 Your vote is confidential and cannot be changed once
-                      submitted.
-                    </li>
-                    <li>
-                      🚫 You can cast vote only in the polls of your region.
-                    </li>
+                    <li>🗳️ Each voter is allowed to vote only once in each election.</li>
+                    <li>🔒 Your vote is confidential and cannot be changed once submitted.</li>
+                    <li>🚫 You can cast vote only in the polls of your region.</li>
                   </ul>
                 </div>
 
+                {/* Ongoing Elections Section */}
                 <div className={styles.upcoming}>
                   <h3>Ongoing Elections</h3>
                   {elections
@@ -161,24 +183,29 @@ const UserDashboard = () => {
                         {new Date(e.createdAt).toLocaleDateString()}
                       </div>
                     ))}
-
                 </div>
-                {/* Add this before the full elections grid */}
+
+                {/* All Elections Overview Section */}
                 <h3 className={styles.overview}>All Elections Overview</h3>
                 <div className={styles.electionGrid}>
                   {elections.map((election) => (
                     <div key={election._id} className={styles.electionCard}>
                       <div className={styles.electionHeader}>
                         <h3>{election.title}</h3>
-                        <span className={`${styles.electionStatus} ${election.status === "active" ? styles.statusActive : styles.statusInactive}`}>{election.status || "Unknown"}</span>
+                        <span
+                          className={`${styles.electionStatus} ${election.status === "active" ? styles.statusActive : styles.statusInactive}`}
+                        >
+                          {election.status || "Unknown"}
+                        </span>
                       </div>
                       <p className={styles.electionDescription}>{election.description}</p>
                       <div className={styles.electionMeta}>
                         <p><strong>Address:</strong> {election.address}</p>
-                        {election.duration && <p><strong>Duration:</strong> {election.duration} days</p>}
+                        {election.duration && <p><strong>Duration:</strong> {election.duration} hours</p>}
                         <p><strong>Created At:</strong> {new Date(election.createdAt).toLocaleString()}</p>
                       </div>
 
+                      {/* Display candidates if available */}
                       {election.options?.length > 0 && (
                         <>
                           <h4 className={styles.candidateTitle}>Candidates</h4>
@@ -204,13 +231,11 @@ const UserDashboard = () => {
                                     {opt.party}
                                   </div>
                                 )}
-                                {election.status === "inactive" &&
-                                  typeof opt.votes === "number" && (
-                                    <div className={styles.voteCount}>
-                                      Votes: {opt.votes}
-                                    </div>
-                                  )}
-
+                                {election.status === "inactive" && typeof opt.votes === "number" && (
+                                  <div className={styles.voteCount}>
+                                    Votes: {opt.votes}
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -222,6 +247,7 @@ const UserDashboard = () => {
               </>
             }
           />
+          {/* Nested Routes for Profile, Voting Component, and Election Info */}
           <Route path="profile" element={<Profile />} />
           <Route path="candidates" element={<VotingComponent />} />
           <Route path="electionInfo" element={<ElectionInfo />} />

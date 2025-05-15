@@ -10,7 +10,7 @@ const LogoutMessage = () => {
 
     const timer = setTimeout(() => {
       navigate("/login");
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [navigate]);
